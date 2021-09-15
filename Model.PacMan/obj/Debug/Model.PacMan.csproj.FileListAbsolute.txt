@@ -1,0 +1,6 @@
+D:\Reps\Image-Convertor\Pac-Man\Model.PacMan\bin\Debug\Model.PacMan.dll
+D:\Reps\Image-Convertor\Pac-Man\Model.PacMan\bin\Debug\Model.PacMan.pdb
+D:\Reps\Image-Convertor\Pac-Man\Model.PacMan\obj\Debug\Model.PacMan.csprojAssemblyReference.cache
+D:\Reps\Image-Convertor\Pac-Man\Model.PacMan\obj\Debug\Model.PacMan.csproj.CoreCompileInputs.cache
+D:\Reps\Image-Convertor\Pac-Man\Model.PacMan\obj\Debug\Model.PacMan.dll
+D:\Reps\Image-Convertor\Pac-Man\Model.PacMan\obj\Debug\Model.PacMan.pdb

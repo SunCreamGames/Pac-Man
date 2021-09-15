@@ -1,0 +1,14 @@
+D:\Reps\Image-Convertor\Pac-Man\PacMan\bin\Debug\Pac_Man.exe.config
+D:\Reps\Image-Convertor\Pac-Man\PacMan\bin\Debug\Pac_Man.exe
+D:\Reps\Image-Convertor\Pac-Man\PacMan\bin\Debug\Pac_Man.pdb
+D:\Reps\Image-Convertor\Pac-Man\PacMan\bin\Debug\FieldGenerator.dll
+D:\Reps\Image-Convertor\Pac-Man\PacMan\bin\Debug\Model.PacMan.dll
+D:\Reps\Image-Convertor\Pac-Man\PacMan\bin\Debug\FieldGenerator.pdb
+D:\Reps\Image-Convertor\Pac-Man\PacMan\bin\Debug\Model.PacMan.pdb
+D:\Reps\Image-Convertor\Pac-Man\PacMan\obj\Debug\PacMan.csprojAssemblyReference.cache
+D:\Reps\Image-Convertor\Pac-Man\PacMan\obj\Debug\Pac_Man.Properties.Resources.resources
+D:\Reps\Image-Convertor\Pac-Man\PacMan\obj\Debug\PacMan.csproj.GenerateResource.cache
+D:\Reps\Image-Convertor\Pac-Man\PacMan\obj\Debug\PacMan.csproj.CoreCompileInputs.cache
+D:\Reps\Image-Convertor\Pac-Man\PacMan\obj\Debug\PacMan.csproj.CopyComplete
+D:\Reps\Image-Convertor\Pac-Man\PacMan\obj\Debug\Pac_Man.exe
+D:\Reps\Image-Convertor\Pac-Man\PacMan\obj\Debug\Pac_Man.pdb
