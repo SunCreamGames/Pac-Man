@@ -4,3 +4,12 @@ D:\Reps\Image-Convertor\Pac-Man\FieldGenerator\obj\Debug\FieldGenerator.csprojAs
 D:\Reps\Image-Convertor\Pac-Man\FieldGenerator\obj\Debug\FieldGenerator.csproj.CoreCompileInputs.cache
 D:\Reps\Image-Convertor\Pac-Man\FieldGenerator\obj\Debug\FieldGenerator.dll
 D:\Reps\Image-Convertor\Pac-Man\FieldGenerator\obj\Debug\FieldGenerator.pdb
+D:\Reps\KPI_5\AI\Pac-Man\FieldGenerator\bin\Debug\FieldGenerator.dll
+D:\Reps\KPI_5\AI\Pac-Man\FieldGenerator\bin\Debug\FieldGenerator.pdb
+D:\Reps\KPI_5\AI\Pac-Man\FieldGenerator\obj\Debug\FieldGenerator.csprojAssemblyReference.cache
+D:\Reps\KPI_5\AI\Pac-Man\FieldGenerator\obj\Debug\FieldGenerator.csproj.CoreCompileInputs.cache
+D:\Reps\KPI_5\AI\Pac-Man\FieldGenerator\obj\Debug\FieldGenerator.dll
+D:\Reps\KPI_5\AI\Pac-Man\FieldGenerator\obj\Debug\FieldGenerator.pdb
+D:\Reps\KPI_5\AI\Pac-Man\FieldGenerator\bin\Debug\Model.PacMan.dll
+D:\Reps\KPI_5\AI\Pac-Man\FieldGenerator\bin\Debug\Model.PacMan.pdb
+D:\Reps\KPI_5\AI\Pac-Man\FieldGenerator\obj\Debug\FieldGenerator.csproj.CopyComplete

@@ -38,13 +38,21 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Game.cs" />
         <Compile Include="Ghosts\Blinky.cs" />
         <Compile Include="Ghosts\Clyde.cs" />
         <Compile Include="Ghosts\Ghost.cs" />
         <Compile Include="Ghosts\Pinky.cs" />
         <Compile Include="Ghosts\Twinky.cs" />
+        <Compile Include="Graph.cs" />
+        <Compile Include="IMazeCreator.cs" />
+        <Compile Include="MazeGenerator.cs" />
+        <Compile Include="MockMazeCreator.cs" />
         <Compile Include="Pacman.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+    </ItemGroup>
+    <ItemGroup>
+     
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

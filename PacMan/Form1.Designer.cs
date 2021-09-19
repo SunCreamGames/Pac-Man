@@ -29,11 +29,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.Timer = new System.Timers.Timer();
+            ((System.ComponentModel.ISupportInitialize) (this.Timer)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // Timer
+            // 
+            this.Timer.Enabled = true;
+            this.Timer.Interval = 33D;
+            this.Timer.SynchronizingObject = this;
+            this.Timer.Elapsed += new System.Timers.ElapsedEventHandler(this.Timer_Elapsed);
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.BackColor = System.Drawing.Color.Maroon;
+            this.ClientSize = new System.Drawing.Size(847, 799);
+            this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            ((System.ComponentModel.ISupportInitialize) (this.Timer)).EndInit();
+            this.ResumeLayout(false);
         }
+
+        private System.Timers.Timer Timer;
 
         #endregion
     }

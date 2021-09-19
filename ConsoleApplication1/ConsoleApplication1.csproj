@@ -38,13 +38,16 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\FieldGenerator\FieldGenerator.csproj">
         <Project>{b510b28e-aaa4-43a5-bb32-c65b8b33cd2d}</Project>
         <Name>FieldGenerator</Name>
+      </ProjectReference>
+      <ProjectReference Include="..\Model.PacMan\Model.PacMan.csproj">
+        <Project>{60034c4c-9075-4b0e-9309-85a449733afa}</Project>
+        <Name>Model.PacMan</Name>
       </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

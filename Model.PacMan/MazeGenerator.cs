@@ -3,31 +3,43 @@
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Dynamic;
 
-    public static class MazeGenerator
+    public class MazeGenerator : IMazeCreator
     {
-        public static List<int[,]> GenerateMap(int width = 30, int height = 30)
+        int[,] IMazeCreator.GenerateMap(int width = 30, int height = 30)
         {
-            int[,] matrix = new int[height, width];
-
-            var result = new List<int[,]>();
-
             int[,] halfMap = new int[9, 5];
             halfMap[3, 0] = halfMap[3, 1] = halfMap[4, 0] = halfMap[4, 1] = 1;
-
-
             halfMap = FillWithTetramino(halfMap);
             halfMap = MakeRoads(halfMap);
 
-            result.Add(halfMap);
-            // Print(helpPiece);
-            // return halfMap;
             var roadMap = MakeFullMap(halfMap);
-            result.Add(roadMap);
-            return result;
+            return AddFinallWall(CreateTiledMap(roadMap));
         }
 
-        private static int[,] MakeFullMap(int[,] halfMap)
+        private int[,] AddFinallWall(int[,] createTiledMap)
+        {
+            int[,] map = new int[createTiledMap.GetLength(0) + 2, createTiledMap.GetLength(1) + 2];
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    if (i == 0 || i == map.GetLength(0) - 1 || j == 0 || j == map.GetLength(1) - 1)
+                    {
+                        map[i, j] = 2;
+                    }
+                    else
+                    {
+                        map[i, j] = createTiledMap[i - 1, j - 1];
+                    }
+                }
+            }
+
+            return map;
+        }
+
+        private int[,] MakeFullMap(int[,] halfMap)
         {
             halfMap = ReverseMatrix(halfMap);
             int[,] map = new int[halfMap.GetLength(0), halfMap.GetLength(1) * 2];
@@ -48,7 +60,106 @@
                 }
             }
 
-            return PolishMap(map);
+            map = PolishMap(map);
+            return map;
+        }
+
+        private static int[,] CreateTiledMap(int[,] map)
+        {
+            var resultMap = new int[map.GetLength(0), map.GetLength(1) * 2 - 1];
+
+            for (int i = 0; i < resultMap.GetLength(0); i++)
+            {
+                for (int j = 0; j < resultMap.GetLength(1); j++)
+                {
+                    if (j >= 7 && j <= 13 && i >= 7 && i <= 9)
+                    {
+                        resultMap[i, j] = 3;
+                        continue;
+                    }
+
+                    if (i % 2 == 0)
+                    {
+                        if (j == 0)
+                        {
+                            resultMap[i, j] = map[i, j];
+                        }
+                        else if (j % 2 == 0)
+                        {
+                            if (map[i, j / 2 - 1] == 1 || j / 2 < map.GetLength(1) && map[i, j / 2] == 1)
+                            {
+                                resultMap[i, j] = 1;
+                            }
+                        }
+                        else
+                        {
+                            resultMap[i, j] = map[i, j / 2];
+                        }
+                    }
+                    else
+                    {
+                        if (j % 2 == 1)
+                        {
+                            resultMap[i, j] = 2;
+                        }
+                        else
+                        {
+                            if (j / 2 < map.GetLength(1))
+                            {
+                                resultMap[i, j] = map[i, j / 2];
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < resultMap.GetLength(0); i++)
+            {
+                for (int j = 0; j < resultMap.GetLength(1); j++)
+                {
+                    if (resultMap[i, j] == 0 || resultMap[i, j] == 2)
+                    {
+                        if (j == resultMap.GetLength(1) - 1)
+                        {
+                            resultMap[i, j] = 1;
+                        }
+
+                        else if (j == 0)
+                        {
+                            resultMap[i, j] = 1;
+                        }
+
+                        else if (i == 0)
+                        {
+                            resultMap[i, j] = 1;
+                        }
+                        else if (i == resultMap.GetLength(0) - 1)
+                        {
+                            resultMap[i, j] = 1;
+                        }
+                        else
+                        {
+                            if (resultMap[i, j] == 2)
+                            {
+                                continue;
+                            }
+
+                            if (resultMap[i, j - 1] == 1 && resultMap[i, j + 1] == 1 ||
+                                resultMap[i - 1, j] == 1 && resultMap[i + 1, j] == 1)
+                            {
+                                resultMap[i, j] = 1;
+                            }
+                        }
+
+                        if (resultMap[i, j] == 0)
+                        {
+                            resultMap[i, j] = 2;
+                        }
+                    }
+                }
+            }
+
+            return resultMap;
         }
 
         private static int[,] PolishMap(int[,] map)
@@ -57,7 +168,7 @@
             for (int i = 0; i < result.GetLength(0); i++)
             {
                 for (int j = 0; j < result.GetLength(1); j++)
-                {   
+                {
                     if (i % 2 == 0)
                     {
                         result[i, j] = map[i, j + 1];
@@ -326,13 +437,13 @@
                     switch (matrix[i, j])
                     {
                         case 0:
-                            Console.Write(" _ ");
+                            Console.Write(" ? ");
                             break;
                         case 1:
                             Console.Write(" 0 ");
                             break;
                         case 2:
-                            Console.Write(" X ");
+                            Console.Write("   ");
                             break;
                         default:
                             Console.Write($" {matrix[i, j]} ");

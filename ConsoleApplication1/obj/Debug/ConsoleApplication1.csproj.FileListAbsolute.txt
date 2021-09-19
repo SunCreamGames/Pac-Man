@@ -7,3 +7,14 @@ D:\Reps\Image-Convertor\Pac-Man\ConsoleApplication1\obj\Debug\ConsoleApplication
 D:\Reps\Image-Convertor\Pac-Man\ConsoleApplication1\obj\Debug\ConsoleApplication1.csproj.CopyComplete
 D:\Reps\Image-Convertor\Pac-Man\ConsoleApplication1\obj\Debug\ConsoleApplication1.exe
 D:\Reps\Image-Convertor\Pac-Man\ConsoleApplication1\obj\Debug\ConsoleApplication1.pdb
+D:\Reps\KPI_5\AI\Pac-Man\ConsoleApplication1\obj\Debug\ConsoleApplication1.csprojAssemblyReference.cache
+D:\Reps\KPI_5\AI\Pac-Man\ConsoleApplication1\obj\Debug\ConsoleApplication1.csproj.CoreCompileInputs.cache
+D:\Reps\KPI_5\AI\Pac-Man\ConsoleApplication1\obj\Debug\ConsoleApplication1.exe
+D:\Reps\KPI_5\AI\Pac-Man\ConsoleApplication1\obj\Debug\ConsoleApplication1.pdb
+D:\Reps\KPI_5\AI\Pac-Man\ConsoleApplication1\bin\Debug\ConsoleApplication1.exe
+D:\Reps\KPI_5\AI\Pac-Man\ConsoleApplication1\bin\Debug\ConsoleApplication1.pdb
+D:\Reps\KPI_5\AI\Pac-Man\ConsoleApplication1\bin\Debug\FieldGenerator.dll
+D:\Reps\KPI_5\AI\Pac-Man\ConsoleApplication1\bin\Debug\Model.PacMan.dll
+D:\Reps\KPI_5\AI\Pac-Man\ConsoleApplication1\bin\Debug\FieldGenerator.pdb
+D:\Reps\KPI_5\AI\Pac-Man\ConsoleApplication1\bin\Debug\Model.PacMan.pdb
+D:\Reps\KPI_5\AI\Pac-Man\ConsoleApplication1\obj\Debug\ConsoleApplication1.csproj.CopyComplete
