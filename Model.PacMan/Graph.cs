@@ -7,14 +7,17 @@ namespace Model.PacMan
     public class Graph
     {
         public Vertex[,] Vertices { get; }
-        public int CoinsLeft => walkableVertices.Select(v => v.HasCoin).Count();
+        public int CoinsLeft => coinsLeft;
         private List<Vertex> walkableVertices;
+        public event Action<int, int> OnCoinEaten;
+
+        private int coinsLeft;
 
         public Graph(int[,] mapMatrix)
         {
             Vertices = new Vertex[mapMatrix.GetLength(0), mapMatrix.GetLength(1)];
             walkableVertices = new List<Vertex>();
-
+            coinsLeft = 0;
             for (int i = 0; i < Vertices.GetLength(0); i++)
             {
                 for (int j = 0; j < Vertices.GetLength(1); j++)
@@ -28,12 +31,24 @@ namespace Model.PacMan
                     {
                         w = Walkablitity.Pen;
                     }
+
                     Vertices[i, j] = new Vertex(w, i, j);
-                    if (mapMatrix[i, j] == 1) walkableVertices.Add(Vertices[i, j]);
+                    if (Vertices[i, j].IsWalkable == Walkablitity.Walkable)
+                    {
+                        walkableVertices.Add(Vertices[i, j]);
+                        Vertices[i, j].OnCoinEaten += CoinEaten;
+                        coinsLeft++;
+                    }
                 }
             }
 
             SetNeighbours();
+        }
+
+        private void CoinEaten(int x, int y)
+        {
+            coinsLeft--;
+            OnCoinEaten?.Invoke(x, y);
         }
 
         private void SetNeighbours()
@@ -74,7 +89,13 @@ namespace Model.PacMan
         public Vertex GetRandomWalkableVertex()
         {
             var r = new Random();
-            return walkableVertices[r.Next(walkableVertices.Count)];
+            Vertex vert;
+            do
+            {
+                vert = walkableVertices[r.Next(walkableVertices.Count)];
+            } while (vert.IsWalkable != Walkablitity.Walkable);
+
+            return vert;
         }
     }
 
@@ -85,6 +106,7 @@ namespace Model.PacMan
         public Vertex RVertex { get; private set; }
         public Vertex DVertex { get; private set; }
 
+        public event Action<int, int> OnCoinEaten;
         public Walkablitity IsWalkable { get; private set; }
         public bool HasCoin { get; private set; }
         public (int, int) Coordinate { get; set; }
@@ -100,6 +122,7 @@ namespace Model.PacMan
         public void DestroyCoin()
         {
             HasCoin = false;
+            OnCoinEaten?.Invoke(Coordinate.Item1, Coordinate.Item2);
         }
 
         public void SetNeighbours(Vertex dVertex, Vertex rVertex, Vertex uVertex, Vertex lVertex)

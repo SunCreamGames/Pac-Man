@@ -46,10 +46,11 @@ namespace Pac_Man
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            game = new Game();
+            game = new Game(new MazeGenerator());
             paused = false;
             direction = Direction.Left;
             game.DrawCall += DrawFrame;
+            game.OnCoinEaten += DestroyCoin;
             var v = game.map.GetRandomWalkableVertex();
             pacMan = new PictureBox()
             {
@@ -62,6 +63,17 @@ namespace Pac_Man
             coins = new List<PictureBox>();
             DrawMap(game.map);
             DrawCoins(game.map);
+        }
+
+        private void DestroyCoin(int x, int y)
+        {
+            var eatenCoins = coins.Where(pB => pB.Bounds.IntersectsWith(pacMan.Bounds));
+            foreach (var eatenCoin in eatenCoins)
+            {
+                
+                eatenCoin.Enabled = false;
+                eatenCoin.Visible = false;
+            }
         }
 
         private void DrawFrame(Graph graphMap, Pacman pacman, Ghost[] ghosts, int frameNumber)
@@ -87,7 +99,7 @@ namespace Pac_Man
                             Enabled = true,
                             Visible = true,
                         };
-                        coins.Add(p);                                                                                                                                   
+                        coins.Add(p);
                     }
                 }
             }

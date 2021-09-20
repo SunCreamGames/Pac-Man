@@ -46,7 +46,6 @@
         <Compile Include="Ghosts\Twinky.cs" />
         <Compile Include="Graph.cs" />
         <Compile Include="IMazeCreator.cs" />
-        <Compile Include="MazeGenerator.cs" />
         <Compile Include="MockMazeCreator.cs" />
         <Compile Include="Pacman.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />

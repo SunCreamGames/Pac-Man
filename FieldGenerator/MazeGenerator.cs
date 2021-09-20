@@ -3,22 +3,92 @@
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Dynamic;
+    using System.Linq;
+    using System.Text;
 
     public class MazeGenerator : IMazeCreator
     {
         int[,] IMazeCreator.GenerateMap(int width = 30, int height = 30)
         {
-            int[,] halfMap = new int[9, 5];
-            halfMap[3, 0] = halfMap[3, 1] = halfMap[4, 0] = halfMap[4, 1] = 1;
-            halfMap = FillWithTetramino(halfMap);
-            halfMap = MakeRoads(halfMap);
+            int[,] map;
 
-            var roadMap = MakeFullMap(halfMap);
-            return AddFinallWall(CreateTiledMap(roadMap));
+            do
+            {
+                map = new int[9, 5];
+                map[3, 0] = map[3, 1] = map[4, 0] = map[4, 1] = 1;
+                map = FillWithTetramino(map);
+                map = MakeRoads(map);
+
+                map = MakeFullMap(map);
+                map = AddFinalWall(CreateTiledMap(map));
+            } while (IsFullConnected(map));
+
+            return map;
         }
 
-        private int[,] AddFinallWall(int[,] createTiledMap)
+        private bool IsFullConnected(int[,] map)
+        {
+            var graph = new Graph(map);
+            var start = graph.GetRandomWalkableVertex();
+            var all = new List<Vertex>();
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    if (graph.Vertices[i, j].IsWalkable == Walkablitity.Walkable)
+                    {
+                        all.Add(graph.Vertices[i, j]);
+                    }
+                }
+            }
+
+            var visited = DFSVisiting(graph, start);
+            var firstNotSecond = visited.Except(all).ToList();
+            var secondNotFirst = all.Except(visited).ToList();
+            return firstNotSecond.Any() || secondNotFirst.Any();
+        }
+
+        private List<Vertex> DFSVisiting(Graph graph, Vertex start)
+        {
+            var visited = new List<Vertex>();
+            var available = new Queue<Vertex>();
+            available.Enqueue(start);
+
+            while (available.Count > 0)
+            {
+                if (available.Peek().LVertex != null && available.Peek().LVertex.IsWalkable == Walkablitity.Walkable &&
+                    !visited.Contains(available.Peek().LVertex))
+                {
+                    available.Enqueue(available.Peek().LVertex);
+                }
+
+                if (available.Peek().DVertex != null && available.Peek().DVertex.IsWalkable == Walkablitity.Walkable &&
+                    !visited.Contains(available.Peek().DVertex))
+                {
+                    available.Enqueue(available.Peek().DVertex);
+                }
+
+                if (available.Peek().UVertex != null && available.Peek().UVertex.IsWalkable == Walkablitity.Walkable &&
+                    !visited.Contains(available.Peek().UVertex))
+                {
+                    available.Enqueue(available.Peek().UVertex);
+                }
+
+                if (available.Peek().RVertex != null && available.Peek().RVertex.IsWalkable == Walkablitity.Walkable &&
+                    !visited.Contains(available.Peek().RVertex))
+                {
+                    available.Enqueue(available.Peek().RVertex);
+                }
+
+                visited.Add(available.Dequeue());
+            }
+
+            return visited;
+        }
+
+        private int[,] AddFinalWall(int[,] createTiledMap)
         {
             int[,] map = new int[createTiledMap.GetLength(0) + 2, createTiledMap.GetLength(1) + 2];
             for (int i = 0; i < map.GetLength(0); i++)
@@ -64,7 +134,7 @@
             return map;
         }
 
-        private static int[,] CreateTiledMap(int[,] map)
+        private int[,] CreateTiledMap(int[,] map)
         {
             var resultMap = new int[map.GetLength(0), map.GetLength(1) * 2 - 1];
 
@@ -162,7 +232,7 @@
             return resultMap;
         }
 
-        private static int[,] PolishMap(int[,] map)
+        private int[,] PolishMap(int[,] map)
         {
             int[,] result = new int[map.GetLength(0), map.GetLength(1) - 1];
             for (int i = 0; i < result.GetLength(0); i++)
@@ -190,7 +260,7 @@
             return result;
         }
 
-        private static int[,] ReverseMatrix(int[,] mat)
+        private int[,] ReverseMatrix(int[,] mat)
         {
             var newMat = new int[mat.GetLength(0), mat.GetLength(1)];
             for (int i = 0; i < newMat.GetLength(0); i++)
@@ -204,7 +274,7 @@
             return newMat;
         }
 
-        private static int[,] MakeRoads(int[,] halfMap)
+        private int[,] MakeRoads(int[,] halfMap)
         {
             var r = new Random();
             var mapWithRoads = new int[19, 6];
@@ -308,7 +378,7 @@
             return mapWithRoads;
         }
 
-        private static int[,] FillWithTetramino(int[,] helpPiece)
+        private int[,] FillWithTetramino(int[,] helpPiece)
         {
             var nextPieceNumber = 2;
             while (HasZeros(helpPiece))

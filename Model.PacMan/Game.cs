@@ -11,6 +11,7 @@ namespace Model.PacMan
         private IMazeCreator mapGen;
         public event Action<Graph, Pacman, Ghost[], int> DrawCall;
         public event Action OnLevelCompleted, OnLevelFailed;
+        public event Action<int, int> OnCoinEaten;
 
         private Pacman player;
         private Blinky red;
@@ -20,12 +21,13 @@ namespace Model.PacMan
 
         private Direction inputDir;
 
-        public Game()
+        public Game(IMazeCreator mapGenerator)
         {
             frameCounter = 1;
-            mapGen = new MazeGenerator();
-            var matrix = mapGen.GenerateMap(10,10);
+            mapGen = mapGenerator;
+            var matrix = mapGen.GenerateMap(10, 10);
             map = new Graph(matrix);
+            map.OnCoinEaten += CoinEaten;
             inputDir = Direction.Left;
 
             player = new Pacman(map);
@@ -33,6 +35,12 @@ namespace Model.PacMan
             blue = new Twinky(map);
             pink = new Pinky(map);
             orange = new Clyde(map);
+        }
+
+        private void CoinEaten(int xCor, int yCor)
+        {
+            OnCoinEaten?.Invoke(xCor, yCor);
+            CheckWin();
         }
 
 
