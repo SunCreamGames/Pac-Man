@@ -9,7 +9,7 @@ namespace Model.PacMan
         public Vertex currentVertex { get; private set; }
 
         public Game.Position Position { get; private set; }
-        public Direction curentDirection { get; private set; }
+        public Direction CurrentDirection { get; private set; }
         private Direction nextDirection;
 
         public Pacman(Graph map)
@@ -29,13 +29,13 @@ namespace Model.PacMan
             };
             UpdateCurrentVertex();
 
-            curentDirection = Direction.None;
+            CurrentDirection = Direction.None;
             nextDirection = Direction.None;
         }
 
         public void UpdatePosition()
         {
-            switch (curentDirection)
+            switch (CurrentDirection)
             {
                 case Direction.Left:
                     Position.X -= 4;
@@ -84,25 +84,25 @@ namespace Model.PacMan
                     break;
             }
 
-            switch (curentDirection)
+            switch (CurrentDirection)
             {
                 case Direction.Left:
-                    if (currentVertex.LVertex.IsWalkable != Walkablitity.Walkable) curentDirection = Direction.None;
+                    if (currentVertex.LVertex.IsWalkable != Walkablitity.Walkable) CurrentDirection = Direction.None;
                     break;
                 case Direction.Right:
-                    if (currentVertex.RVertex.IsWalkable != Walkablitity.Walkable) curentDirection = Direction.None;
+                    if (currentVertex.RVertex.IsWalkable != Walkablitity.Walkable) CurrentDirection = Direction.None;
                     break;
                 case Direction.Up:
-                    if (currentVertex.UVertex.IsWalkable != Walkablitity.Walkable) curentDirection = Direction.None;
+                    if (currentVertex.UVertex.IsWalkable != Walkablitity.Walkable) CurrentDirection = Direction.None;
                     break;
                 case Direction.Down:
-                    if (currentVertex.DVertex.IsWalkable != Walkablitity.Walkable) curentDirection = Direction.None;
+                    if (currentVertex.DVertex.IsWalkable != Walkablitity.Walkable) CurrentDirection = Direction.None;
                     break;
             }
 
             if (nextDirection != Direction.None)
             {
-                curentDirection = nextDirection;
+                CurrentDirection = nextDirection;
                 nextDirection = Direction.None;
             }
         }

@@ -9,7 +9,7 @@ namespace Model.PacMan
         public Graph map;
         private int frameCounter;
         private IMazeCreator mapGen;
-        public event Action<Graph, Pacman, Ghost[], int> DrawCall;
+        public event Action<Graph, Pacman, Ghost, Ghost, Ghost, Ghost, int> DrawCall;
         public event Action OnLevelCompleted, OnLevelFailed;
         public event Action<int, int> OnCoinEaten;
 
@@ -31,10 +31,11 @@ namespace Model.PacMan
             inputDir = Direction.Left;
 
             player = new Pacman(map);
-            red = new Blinky(map);
-            blue = new Twinky(map);
-            pink = new Pinky(map);
-            orange = new Clyde(map);
+
+            red = new Blinky(map, map.Vertices[11, 8]);
+            blue = new Twinky(map, map.Vertices[11, 9]);
+            pink = new Pinky(map, map.Vertices[8, 9]);
+            orange = new Clyde(map, map.Vertices[12, 9]);
         }
 
         private void CoinEaten(int xCor, int yCor)
@@ -46,13 +47,12 @@ namespace Model.PacMan
 
         public void UpdateFrame(Direction input)
         {
-            // CheckWin();
             // CheckLose();
             MakeDecisions(input);
             MoveAll();
             frameCounter++;
             frameCounter %= 10;
-            DrawCall?.Invoke(map, player, new Ghost[] {red, blue, orange, pink}, frameCounter);
+            DrawCall?.Invoke(map, player, red, orange, pink, blue, frameCounter);
         }
 
         private void CheckLose()
@@ -86,19 +86,16 @@ namespace Model.PacMan
 
         private void MoveAll()
         {
-            // pink.UpdatePosition();
-            // blue.UpdatePosition();
-            // red.UpdatePosition();
-            // orange.UpdatePosition();
+            pink.UpdatePosition();
+            blue.UpdatePosition();
+            red.UpdatePosition();
+            orange.UpdatePosition();
             player.UpdatePosition();
         }
 
         private void MakeDecisions(Direction input)
         {
-            // pink.MakeDecision();
-            // blue.MakeDecision();
-            // red.MakeDecision();
-            // orange.MakeDecision();
+         
             player.MakeDecision(input);
         }
 

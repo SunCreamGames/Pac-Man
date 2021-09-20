@@ -19,25 +19,13 @@ namespace Pac_Man
         private Direction direction;
 
         private PictureBox pacMan;
+        private PictureBox redBox, orangeBox, pinkBox, blueBox;
         private bool paused;
-        Image wall = Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Field\\wall.png");
-
-        Image coin = Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Field\\point.png");
+        Image wall, coin;
 
         private List<PictureBox> coins;
 
-        private Image[] pacmanImages = new Image[]
-        {
-            Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\3_packman.png"),
-            Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\L_1_packman.png"),
-            Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\L_2_packman.png"),
-            Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\U_1_packman.png"),
-            Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\U_2_packman.png"),
-            Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\R_1_packman.png"),
-            Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\R_2_packman.png"),
-            Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\D_1_packman.png"),
-            Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\D_2_packman.png"),
-        };
+        private Image[] pacmanImages, redImages, pinkImages, orangeImages, blueImages;
 
         public Form1()
         {
@@ -46,8 +34,9 @@ namespace Pac_Man
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            LoadImages();
             game = new Game(new MazeGenerator());
-            paused = false;
+            paused = true;
             direction = Direction.Left;
             game.DrawCall += DrawFrame;
             game.OnCoinEaten += DestroyCoin;
@@ -60,25 +49,251 @@ namespace Pac_Man
                 Enabled = true,
                 Visible = true
             };
+            redBox = new PictureBox()
+            {
+                Parent = this,
+                Image = redImages[0],
+                Size = new Size(16, 16),
+                Enabled = true,
+                Visible = true
+            };
+            blueBox = new PictureBox()
+            {
+                Parent = this,
+                Image = blueImages[0],
+                Size = new Size(16, 16),
+                Enabled = true,
+                Visible = true
+            };
+            pinkBox = new PictureBox()
+            {
+                Parent = this,
+                Image = pinkImages[0],
+                Size = new Size(16, 16),
+                Enabled = true,
+                Visible = true
+            };
+            orangeBox = new PictureBox()
+            {
+                Parent = this,
+                Image = orangeImages[0],
+                Size = new Size(16, 16),
+                Enabled = true,
+                Visible = true
+            };
             coins = new List<PictureBox>();
             DrawMap(game.map);
             DrawCoins(game.map);
         }
+
 
         private void DestroyCoin(int x, int y)
         {
             var eatenCoins = coins.Where(pB => pB.Bounds.IntersectsWith(pacMan.Bounds));
             foreach (var eatenCoin in eatenCoins)
             {
-                
                 eatenCoin.Enabled = false;
                 eatenCoin.Visible = false;
             }
         }
 
-        private void DrawFrame(Graph graphMap, Pacman pacman, Ghost[] ghosts, int frameNumber)
+        private void DrawFrame(Graph graphMap, Pacman pacman, Ghost red, Ghost orange, Ghost pink, Ghost blue,
+            int frameNumber)
         {
             DrawPacman(pacman, frameNumber);
+            DrawGhosts(red, orange, pink, blue, frameNumber);
+        }
+
+        private void DrawGhosts(Ghost red, Ghost orange, Ghost pink, Ghost blue, int frameNumber)
+        {
+            Image curImg;
+
+            switch (red.CurrentDirection)
+            {
+                case Direction.Down:
+                    if (frameNumber % 2 == 0)
+                        curImg = redImages[0];
+
+                    else
+                        curImg = redImages[1];
+
+                    break;
+
+                case Direction.Left:
+                    if (frameNumber % 2 == 0)
+                        curImg = redImages[2];
+
+                    else
+                        curImg = redImages[3];
+
+                    break;
+
+                case Direction.Up:
+                    if (frameNumber % 2 == 0)
+                        curImg = redImages[4];
+
+                    else
+                        curImg = redImages[5];
+
+                    break;
+
+                case Direction.Right:
+                    if (frameNumber % 2 == 0)
+                        curImg = redImages[6];
+
+                    else
+                        curImg = redImages[7];
+
+                    break;
+
+                default:
+                    curImg = redImages[0];
+
+                    break;
+            }
+
+            redBox.Image = curImg;
+            redBox.Location = new Point(red.Position.X, red.Position.Y);
+
+            switch (pink.CurrentDirection)
+            {
+                case Direction.Down:
+                    if (frameNumber % 2 == 0)
+                        curImg = pinkImages[0];
+
+                    else
+                        curImg = pinkImages[1];
+
+                    break;
+
+                case Direction.Left:
+                    if (frameNumber % 2 == 0)
+                        curImg = pinkImages[2];
+
+                    else
+                        curImg = pinkImages[3];
+
+                    break;
+
+                case Direction.Up:
+                    if (frameNumber % 2 == 0)
+                        curImg = pinkImages[4];
+
+                    else
+                        curImg = pinkImages[5];
+
+                    break;
+
+                case Direction.Right:
+                    if (frameNumber % 2 == 0)
+                        curImg = pinkImages[6];
+
+                    else
+                        curImg = pinkImages[7];
+
+                    break;
+
+                default:
+                    curImg = pinkImages[0];
+
+                    break;
+            }
+
+            pinkBox.Image = curImg;
+            pinkBox.Location = new Point(pink.Position.X, pink.Position.Y);
+
+            switch (orange.CurrentDirection)
+            {
+                case Direction.Down:
+                    if (frameNumber % 2 == 0)
+                        curImg = orangeImages[0];
+
+                    else
+                        curImg = orangeImages[1];
+
+                    break;
+
+                case Direction.Left:
+                    if (frameNumber % 2 == 0)
+                        curImg = orangeImages[2];
+
+                    else
+                        curImg = orangeImages[3];
+
+                    break;
+
+                case Direction.Up:
+                    if (frameNumber % 2 == 0)
+                        curImg = orangeImages[4];
+
+                    else
+                        curImg = orangeImages[5];
+
+                    break;
+
+                case Direction.Right:
+                    if (frameNumber % 2 == 0)
+                        curImg = orangeImages[6];
+
+                    else
+                        curImg = orangeImages[7];
+
+                    break;
+
+                default:
+                    curImg = orangeImages[0];
+
+                    break;
+            }
+
+            orangeBox.Image = curImg;
+            orangeBox.Location = new Point(orange.Position.X, orange.Position.Y);
+            switch (blue.CurrentDirection)
+            {
+                case Direction.Down:
+                    if (frameNumber % 2 == 0)
+                        curImg = blueImages[0];
+
+                    else
+                        curImg = blueImages[1];
+
+                    break;
+
+                case Direction.Left:
+                    if (frameNumber % 2 == 0)
+                        curImg = blueImages[2];
+
+                    else
+                        curImg = blueImages[3];
+
+                    break;
+
+                case Direction.Up:
+                    if (frameNumber % 2 == 0)
+                        curImg = blueImages[4];
+
+                    else
+                        curImg = blueImages[5];
+
+                    break;
+
+                case Direction.Right:
+                    if (frameNumber % 2 == 0)
+                        curImg = blueImages[6];
+
+                    else
+                        curImg = blueImages[7];
+
+                    break;
+
+                default:
+                    curImg = blueImages[0];
+
+                    break;
+            }
+
+            blueBox.Image = curImg;
+            blueBox.Location = new Point(blue.Position.X, blue.Position.Y);
         }
 
         private void DrawCoins(Graph graphMap)
@@ -109,7 +324,7 @@ namespace Pac_Man
         {
             Image curImg;
 
-            switch (pacman.curentDirection)
+            switch (pacman.CurrentDirection)
             {
                 case Direction.Left:
                     if (frameNumber % 2 == 0)
@@ -204,6 +419,68 @@ namespace Pac_Man
                     direction = Direction.Left;
                     break;
             }
+        }
+
+        private void LoadImages()
+        {
+            pacmanImages = new[]
+            {
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\3_packman.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\L_1_packman.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\L_2_packman.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\U_1_packman.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\U_2_packman.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\R_1_packman.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\R_2_packman.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\D_1_packman.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\D_2_packman.png"),
+            };
+            redImages = new Image[]
+            {
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\blinky_d_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\blinky_d_2.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\blinky_l_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\blinky_l_2.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\blinky_u_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\blinky_u_2.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\blinky_r_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\blinky_r_2.png"),
+            };
+            pinkImages = new Image[]
+            {
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\pinky_d_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\pinky_d_2.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\pinky_l_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\pinky_l_2.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\pinky_u_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\pinky_u_2.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\pinky_r_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\pinky_r_2.png"),
+            };
+            orangeImages = new Image[]
+            {
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\clyde_d_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\clyde_d_2.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\clyde_l_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\clyde_l_2.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\clyde_u_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\clyde_u_2.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\clyde_r_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\clyde_r_2.png"),
+            };
+            blueImages = new Image[]
+            {
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\twinky_d_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\twinky_d_2.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\twinky_l_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\twinky_l_2.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\twinky_u_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\twinky_u_2.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\twinky_r_1.png"),
+                Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Entities\\twinky_r_2.png"),
+            };
+            wall = Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Field\\wall.png");
+            coin = Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Field\\point.png");
         }
     }
 }

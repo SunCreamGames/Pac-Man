@@ -8,35 +8,37 @@ namespace Model.PacMan
     {
         private Graph map;
         private Vertex currentVertex;
-        public Direction curentDirection { get; private set; }
+        public Direction CurrentDirection { get; protected set; }
         public Game.Position Position { get; }
 
-        public Ghost(Graph map)
+        public Ghost(Graph map, Vertex startPoint)
         {
             this.map = map;
-            currentVertex = map.GetRandomWalkableVertex();
+            currentVertex = startPoint;
             Position = new Game.Position()
             {
                 X = 8 + currentVertex.Coordinate.Item1 * 16,
                 Y = 8 + currentVertex.Coordinate.Item2 * 16
             };
+            CurrentDirection = Direction.Up;
+            MakeDecision();
         }
 
         public void UpdatePosition()
         {
-            switch (curentDirection)
+            switch (CurrentDirection)
             {
                 case Direction.Left:
-                    Position.X -= 2;
+                    Position.X -= 4;
                     break;
                 case Direction.Right:
-                    Position.X += 2;
+                    Position.X += 4;
                     break;
                 case Direction.Up:
-                    Position.Y += 2;
+                    Position.Y -= 4;
                     break;
                 case Direction.Down:
-                    Position.Y -= 2;
+                    Position.Y += 4;
                     break;
             }
 
@@ -45,115 +47,249 @@ namespace Model.PacMan
 
         private void UpdateCurrentVertex()
         {
-            if (Position.X % 16 == 8 && Position.Y % 16 == 8)
+            var c = currentVertex;
+            if (Position.Y % 16 == 8 && Position.X % 16 == 8)
             {
-                currentVertex = map.Vertices[Position.X / 16, Position.Y / 16];
+                currentVertex = map.Vertices[Position.Y / 16, Position.X / 16];
             }
+
+            if (c != currentVertex)
+            {
+                TryMakeDecision();
+            }
+        }
+
+        private void TryMakeDecision()
+        {
+            MakeDecision();
         }
 
         public void MakeDecision()
         {
             var r = new Random();
-            switch (curentDirection)
+            List<Vertex> possibleMoves;
+            switch (CurrentDirection)
             {
                 case Direction.Left:
-                    if (currentVertex.LVertex.IsWalkable != Walkablitity.Wall)
+                    if (currentVertex.LVertex.IsWalkable == Walkablitity.Wall)
                     {
-                        var possibleMoves = new List<Vertex>()
+                        possibleMoves = new List<Vertex>()
                             {currentVertex.DVertex, currentVertex.RVertex, currentVertex.UVertex};
                         possibleMoves = possibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
                         if (nextDir == currentVertex.DVertex)
                         {
-                            curentDirection = Direction.Down;
+                            CurrentDirection = Direction.Down;
                         }
                         else if (nextDir == currentVertex.RVertex)
                         {
-                            curentDirection = Direction.Right;
+                            CurrentDirection = Direction.Right;
                         }
                         else
                         {
-                            curentDirection = Direction.Up;
+                            CurrentDirection = Direction.Up;
+                        }
+                    }
+                    else
+                    {
+                        possibleMoves = new List<Vertex>()
+                        {
+                            currentVertex.LVertex, currentVertex.DVertex, currentVertex.RVertex, currentVertex.UVertex
+                        }.Where(v => v != null && v.IsWalkable != Walkablitity.Wall).ToList();
+                        if (possibleMoves.Count <= 2)
+                        {
+                            break;
+                        }
+
+                        var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
+
+                        if (nextDir == currentVertex.DVertex)
+                        {
+                            CurrentDirection = Direction.Down;
+                        }
+                        else if (nextDir == currentVertex.RVertex)
+                        {
+                            CurrentDirection = Direction.Right;
+                        }
+                        else if (nextDir == currentVertex.LVertex)
+                        {
+                            CurrentDirection = Direction.Left;
+                        }
+                        else
+                        {
+                            CurrentDirection = Direction.Up;
                         }
                     }
 
-                    break;
+                    return;
                 case Direction.Right:
-                    if (currentVertex.RVertex.IsWalkable != Walkablitity.Wall)
+                    if (currentVertex.RVertex.IsWalkable == Walkablitity.Wall)
                     {
-                        var possibleMoves = new List<Vertex>()
+                        possibleMoves = new List<Vertex>()
                             {currentVertex.DVertex, currentVertex.LVertex, currentVertex.UVertex};
                         possibleMoves = possibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
                         if (nextDir == currentVertex.DVertex)
                         {
-                            curentDirection = Direction.Down;
+                            CurrentDirection = Direction.Down;
                         }
                         else if (nextDir == currentVertex.LVertex)
                         {
-                            curentDirection = Direction.Left;
+                            CurrentDirection = Direction.Left;
                         }
                         else
                         {
-                            curentDirection = Direction.Up;
+                            CurrentDirection = Direction.Up;
+                        }
+                    }
+                    else
+                    {
+                        possibleMoves = new List<Vertex>()
+                        {
+                            currentVertex.LVertex, currentVertex.DVertex, currentVertex.RVertex, currentVertex.UVertex
+                        }.Where(v => v != null && v.IsWalkable != Walkablitity.Wall).ToList();
+                        if (possibleMoves.Count <= 2)
+                        {
+                            break;
+                        }
+
+                        var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
+
+                        if (nextDir == currentVertex.DVertex)
+                        {
+                            CurrentDirection = Direction.Down;
+                        }
+                        else if (nextDir == currentVertex.RVertex)
+                        {
+                            CurrentDirection = Direction.Right;
+                        }
+                        else if (nextDir == currentVertex.LVertex)
+                        {
+                            CurrentDirection = Direction.Left;
+                        }
+                        else
+                        {
+                            CurrentDirection = Direction.Up;
                         }
                     }
 
-                    break;
+                    return;
+
                 case Direction.Up:
-                    if (currentVertex.UVertex.IsWalkable != Walkablitity.Wall)
+                    if (currentVertex.UVertex.IsWalkable == Walkablitity.Wall)
                     {
-                        var possibleMoves = new List<Vertex>()
+                        possibleMoves = new List<Vertex>()
                             {currentVertex.DVertex, currentVertex.LVertex, currentVertex.RVertex};
                         possibleMoves = possibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
                         if (nextDir == currentVertex.DVertex)
                         {
-                            curentDirection = Direction.Down;
+                            CurrentDirection = Direction.Down;
                         }
                         else if (nextDir == currentVertex.LVertex)
                         {
-                            curentDirection = Direction.Left;
+                            CurrentDirection = Direction.Left;
                         }
                         else
                         {
-                            curentDirection = Direction.Right;
+                            CurrentDirection = Direction.Right;
+                        }
+                    }
+                    else
+                    {
+                        possibleMoves = new List<Vertex>()
+                        {
+                            currentVertex.LVertex, currentVertex.DVertex, currentVertex.RVertex, currentVertex.UVertex
+                        }.Where(v => v != null && v.IsWalkable != Walkablitity.Wall).ToList();
+                        if (possibleMoves.Count <= 2)
+                        {
+                            break;
+                        }
+
+                        var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
+
+                        if (nextDir == currentVertex.DVertex)
+                        {
+                            CurrentDirection = Direction.Down;
+                        }
+                        else if (nextDir == currentVertex.RVertex)
+                        {
+                            CurrentDirection = Direction.Right;
+                        }
+                        else if (nextDir == currentVertex.LVertex)
+                        {
+                            CurrentDirection = Direction.Left;
+                        }
+                        else
+                        {
+                            CurrentDirection = Direction.Up;
                         }
                     }
 
-                    break;
+                    return;
+
                 case Direction.Down:
-                    if (currentVertex.DVertex.IsWalkable != Walkablitity.Wall)
+                    if (currentVertex.DVertex.IsWalkable == Walkablitity.Wall)
                     {
-                        var possibleMoves = new List<Vertex>()
+                        possibleMoves = new List<Vertex>()
                             {currentVertex.UVertex, currentVertex.LVertex, currentVertex.RVertex};
                         possibleMoves = possibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
                         if (nextDir == currentVertex.UVertex)
                         {
-                            curentDirection = Direction.Up;
+                            CurrentDirection = Direction.Up;
                         }
                         else if (nextDir == currentVertex.LVertex)
                         {
-                            curentDirection = Direction.Left;
+                            CurrentDirection = Direction.Left;
                         }
                         else
                         {
-                            curentDirection = Direction.Right;
+                            CurrentDirection = Direction.Right;
+                        }
+                    }
+                    else
+                    {
+                        possibleMoves = new List<Vertex>()
+                        {
+                            currentVertex.LVertex, currentVertex.DVertex, currentVertex.RVertex, currentVertex.UVertex
+                        }.Where(v => v != null && v.IsWalkable != Walkablitity.Wall).ToList();
+                        if (possibleMoves.Count <= 2)
+                        {
+                            break;
+                        }
+
+                        var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
+
+                        if (nextDir == currentVertex.DVertex)
+                        {
+                            CurrentDirection = Direction.Down;
+                        }
+                        else if (nextDir == currentVertex.RVertex)
+                        {
+                            CurrentDirection = Direction.Right;
+                        }
+                        else if (nextDir == currentVertex.LVertex)
+                        {
+                            CurrentDirection = Direction.Left;
+                        }
+                        else
+                        {
+                            CurrentDirection = Direction.Up;
                         }
                     }
 
-                    break;
+                    return;
             }
         }
     }
+}
 
-    public enum Direction
-    {
-        Left,
-        Right,
-        Up,
-        Down,
-        None
-    }
+public enum Direction
+{
+    Left,
+    Right,
+    Up,
+    Down,
+    None
 }

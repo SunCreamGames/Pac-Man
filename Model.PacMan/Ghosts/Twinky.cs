@@ -4,8 +4,9 @@ namespace Model.PacMan
     {
         private readonly Graph map;
 
-        public Twinky(Graph map) : base(map)
+        public Twinky(Graph map, Vertex vert) : base(map , vert)
         {
+            CurrentDirection = Direction.Up;
             this.map = map;
         }
     }
