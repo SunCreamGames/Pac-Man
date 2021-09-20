@@ -142,11 +142,24 @@
             {
                 for (int j = 0; j < resultMap.GetLength(1); j++)
                 {
+                    if (j >= 7 && j <= 13 && (i == 7 || i == 9) || i == 8 && (j == 7 || j == 13))
+                    {
+                        if (i == 7 && j == 10)
+                        {
+                            resultMap[i, j] = 3;
+                            continue;
+                        }
+
+                        resultMap[i, j] = 2;
+                        continue;
+                    }
+
                     if (j >= 7 && j <= 13 && i >= 7 && i <= 9)
                     {
                         resultMap[i, j] = 3;
                         continue;
                     }
+
 
                     if (i % 2 == 0)
                     {

@@ -3,7 +3,7 @@ namespace Model.PacMan
     using System;
     using System.IO;
 
-    public class Pacman : IDisposable
+    public class Pacman
     {
         private Graph map;
         public Vertex currentVertex { get; private set; }
@@ -11,21 +11,26 @@ namespace Model.PacMan
         public Game.Position Position { get; private set; }
         public Direction curentDirection { get; private set; }
         private Direction nextDirection;
-        StreamWriter logger;
 
         public Pacman(Graph map)
         {
             this.map = map;
 
-            currentVertex = map.GetRandomWalkableVertex();
+            currentVertex = map.Vertices[map.Vertices.GetLength(1) / 2, map.Vertices.GetLength(0) - 2];
+            while (currentVertex.IsWalkable != Walkablitity.Walkable)
+            {
+                currentVertex = currentVertex.UVertex;
+            }
+
             Position = new Game.Position()
             {
                 X = 8 + currentVertex.Coordinate.Item1 * 16,
                 Y = 8 + currentVertex.Coordinate.Item2 * 16
             };
+            UpdateCurrentVertex();
+
             curentDirection = Direction.None;
             nextDirection = Direction.None;
-            logger = new StreamWriter("C:\\Users\\Богдан\\Desktop\\logs.txt");
         }
 
         public void UpdatePosition()
@@ -61,18 +66,6 @@ namespace Model.PacMan
             {
                 currentVertex.DestroyCoin();
             }
-
-
-            logger.WriteLine(
-                $" Position :   {currentVertex.Coordinate.Item1}:{currentVertex.Coordinate.Item2}");
-            logger.WriteLine(
-                $" L :   {currentVertex.LVertex.Coordinate.Item1}:{currentVertex.LVertex.Coordinate.Item2}:{currentVertex.LVertex.IsWalkable}");
-            logger.WriteLine(
-                $" U :   {currentVertex.UVertex.Coordinate.Item1}:{currentVertex.UVertex.Coordinate.Item2}:{currentVertex.UVertex.IsWalkable}");
-            logger.WriteLine(
-                $" R :   {currentVertex.RVertex.Coordinate.Item1}:{currentVertex.RVertex.Coordinate.Item2}:{currentVertex.RVertex.IsWalkable}");
-            logger.WriteLine(
-                $" D :   {currentVertex.DVertex.Coordinate.Item1}:{currentVertex.DVertex.Coordinate.Item2}:{currentVertex.DVertex.IsWalkable}");
 
 
             switch (nextDirection)
@@ -112,20 +105,11 @@ namespace Model.PacMan
                 curentDirection = nextDirection;
                 nextDirection = Direction.None;
             }
-
-            logger.WriteLine();
-            logger.Flush();
         }
 
         public void MakeDecision(Direction inputDir)
         {
             nextDirection = inputDir;
-        }
-
-        public void Dispose()
-        {
-            logger.Close();
-            logger?.Dispose();
         }
     }
 }
