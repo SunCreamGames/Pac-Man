@@ -1,5 +1,6 @@
 namespace Model.PacMan
 {
+    using System;
     using System.Dynamic;
 
     public class Blinky : Ghost
@@ -10,6 +11,7 @@ namespace Model.PacMan
         {
             this.map = map;
             CurrentDirection = Direction.Up;
+            r = new Random(0);
         }
     }
 }

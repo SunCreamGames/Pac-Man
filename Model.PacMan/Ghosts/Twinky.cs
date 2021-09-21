@@ -1,5 +1,7 @@
 namespace Model.PacMan
 {
+    using System;
+
     public class Twinky : Ghost
     {
         private readonly Graph map;
@@ -8,6 +10,7 @@ namespace Model.PacMan
         {
             CurrentDirection = Direction.Up;
             this.map = map;
+            r = new Random(4);
         }
     }
 }

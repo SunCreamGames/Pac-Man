@@ -1,5 +1,7 @@
 namespace Model.PacMan
 {
+    using System;
+
     public class Clyde : Ghost
     {
         private readonly Graph map;
@@ -8,6 +10,8 @@ namespace Model.PacMan
         {
             CurrentDirection = Direction.Left;
             this.map = map;
+            r = new Random(2);
+
         }
     }
 }

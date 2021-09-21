@@ -33,6 +33,17 @@ namespace Model.PacMan
             nextDirection = Direction.None;
         }
 
+        public void SetCurrentVertex(Vertex v)
+        {
+            currentVertex = v;
+            Position = new Game.Position()
+            {
+                X = 8 + currentVertex.Coordinate.Item1 * 16,
+                Y = 8 + currentVertex.Coordinate.Item2 * 16
+            };
+            CurrentDirection = Direction.None;
+        }
+
         public void UpdatePosition()
         {
             switch (CurrentDirection)

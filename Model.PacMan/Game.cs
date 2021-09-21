@@ -10,36 +10,62 @@ namespace Model.PacMan
         private int frameCounter;
         private IMazeCreator mapGen;
         public event Action<Graph, Pacman, Ghost, Ghost, Ghost, Ghost, int> DrawCall;
-        public event Action OnLevelCompleted, OnLevelFailed;
+        public event Action OnLevelCompleted;
+        public event Action<int> OnPacmanDie;
         public event Action<int, int> OnCoinEaten;
-
+        public int LivesCount => livesCount;
+        private int livesCount;
         private Pacman player;
         private Blinky red;
         private Twinky blue;
         private Pinky pink;
         private Clyde orange;
-
         private Direction inputDir;
+        public int CurrentScore { get; private set; }
+
 
         public Game(IMazeCreator mapGenerator)
         {
+            livesCount = 3;
             frameCounter = 1;
             mapGen = mapGenerator;
             var matrix = mapGen.GenerateMap(10, 10);
             map = new Graph(matrix);
             map.OnCoinEaten += CoinEaten;
             inputDir = Direction.Left;
+            CurrentScore = 0;
+            SpawnActors();
+        }
 
+        public void RestartLevel()
+        {
+            livesCount = 3;
+            CurrentScore = 0;
+
+            foreach (var vertex in map.Vertices)
+            {
+                if (vertex.IsWalkable == Walkablitity.Walkable)
+                {
+                    vertex.SetCoin();
+                }
+            }
+
+            SpawnActors();
+        }
+
+        public void SpawnActors()
+        {
             player = new Pacman(map);
 
             red = new Blinky(map, map.Vertices[11, 8]);
             blue = new Twinky(map, map.Vertices[11, 9]);
-            pink = new Pinky(map, map.Vertices[8, 9]);
+            pink = new Pinky(map, map.Vertices[9, 9]);
             orange = new Clyde(map, map.Vertices[12, 9]);
         }
 
         private void CoinEaten(int xCor, int yCor)
         {
+            CurrentScore += 50;
             OnCoinEaten?.Invoke(xCor, yCor);
             CheckWin();
         }
@@ -47,12 +73,12 @@ namespace Model.PacMan
 
         public void UpdateFrame(Direction input)
         {
-            // CheckLose();
             MakeDecisions(input);
             MoveAll();
             frameCounter++;
             frameCounter %= 10;
             DrawCall?.Invoke(map, player, red, orange, pink, blue, frameCounter);
+            CheckLose();
         }
 
         private void CheckLose()
@@ -63,14 +89,16 @@ namespace Model.PacMan
                 if (ghost.Position.X == player.Position.X &&
                     Math.Abs(ghost.Position.Y - player.Position.Y) < 12)
                 {
-                    OnLevelFailed?.Invoke();
+                    livesCount--;
+                    OnPacmanDie?.Invoke(livesCount);
                     return;
                 }
 
                 if (ghost.Position.Y == player.Position.Y &&
                     Math.Abs(ghost.Position.X - player.Position.X) < 12)
                 {
-                    OnLevelFailed?.Invoke();
+                    livesCount--;
+                    OnPacmanDie?.Invoke(livesCount);
                     return;
                 }
             }
@@ -95,7 +123,6 @@ namespace Model.PacMan
 
         private void MakeDecisions(Direction input)
         {
-         
             player.MakeDecision(input);
         }
 

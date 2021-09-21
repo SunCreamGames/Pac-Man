@@ -10,6 +10,8 @@ using System.Windows.Forms;
 
 namespace Pac_Man
 {
+    using System.Net;
+    using System.Threading;
     using System.Timers;
     using Model.PacMan;
 
@@ -17,11 +19,14 @@ namespace Pac_Man
     {
         private Game game;
         private Direction direction;
-
+        private PictureBox[] liveBoxes;
         private PictureBox pacMan;
         private PictureBox redBox, orangeBox, pinkBox, blueBox;
         private bool paused;
         Image wall, coin;
+
+        private WinWindow winWindow;
+        private LoseWindow loseWindow;
 
         private List<PictureBox> coins;
 
@@ -35,12 +40,26 @@ namespace Pac_Man
         private void Form1_Load(object sender, EventArgs e)
         {
             LoadImages();
+            Size = new Size(new Point(400, 420));
             game = new Game(new MazeGenerator());
-            paused = true;
             direction = Direction.Left;
             game.DrawCall += DrawFrame;
             game.OnCoinEaten += DestroyCoin;
+            game.OnLevelCompleted += GameWinWindow;
+            game.OnPacmanDie += OnPacmanDie;
             var v = game.map.GetRandomWalkableVertex();
+            liveBoxes = new PictureBox[game.LivesCount];
+            for (int i = 0; i < liveBoxes.Length; i++)
+            {
+                liveBoxes[i] = new PictureBox();
+                liveBoxes[i].Visible = true;
+                liveBoxes[i].Enabled = true;
+                liveBoxes[i].Size = new Size(32, 32);
+                liveBoxes[i].Parent = this;
+                liveBoxes[i].Image = pacmanImages[6];
+                liveBoxes[i].Location = new Point(10 + i * 30, game.map.Vertices.GetLength(0) * 17);
+            }
+
             pacMan = new PictureBox()
             {
                 Parent = this,
@@ -84,6 +103,56 @@ namespace Pac_Man
             coins = new List<PictureBox>();
             DrawMap(game.map);
             DrawCoins(game.map);
+            paused = true;
+        }
+
+
+        private void OnPacmanDie(int lives)
+        {
+            UpdateLivesIndicator(lives);
+            if (lives <= 0)
+            {
+                GameLoseWidow();
+            }
+        }
+
+        private void UpdateLivesIndicator(int lives)
+        {
+            for (int i = 0; i < liveBoxes.Length; i++)
+            {
+                if (i <= lives - 1)
+                    liveBoxes[i].Visible = true;
+                else
+                    liveBoxes[i].Visible = false;
+                game.SpawnActors();
+                paused = false;
+            }
+        }
+
+        private void GameLoseWidow()
+        {
+            game.DrawCall -= DrawFrame;
+            game.OnCoinEaten -= DestroyCoin;
+            game.OnLevelCompleted -= GameWinWindow;
+            game.OnPacmanDie -= OnPacmanDie;
+
+            Hide();
+            loseWindow = new LoseWindow(this);
+            loseWindow.Show();
+            loseWindow.Closed += (s, args) => { Close(); };
+        }
+
+        private void GameWinWindow()
+        {
+            game.DrawCall -= DrawFrame;
+            game.OnCoinEaten -= DestroyCoin;
+            game.OnLevelCompleted -= GameWinWindow;
+            game.OnPacmanDie -= OnPacmanDie;
+
+            Hide();
+            winWindow = new WinWindow(this);
+            winWindow.Show();
+            winWindow.Closed += (s, args) => { Close(); };
         }
 
 
@@ -95,6 +164,8 @@ namespace Pac_Man
                 eatenCoin.Enabled = false;
                 eatenCoin.Visible = false;
             }
+
+            UpdateScoreLabel();
         }
 
         private void DrawFrame(Graph graphMap, Pacman pacman, Ghost red, Ghost orange, Ghost pink, Ghost blue,
@@ -481,6 +552,26 @@ namespace Pac_Man
             };
             wall = Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Field\\wall.png");
             coin = Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Field\\point.png");
+        }
+
+        public void RestartLevel()
+        {
+            game.DrawCall += DrawFrame;
+            game.OnCoinEaten += DestroyCoin;
+            game.OnLevelCompleted += GameWinWindow;
+            game.OnPacmanDie += OnPacmanDie;
+
+            game.RestartLevel();
+            loseWindow.Enabled = false;
+            loseWindow.Hide();
+            DrawCoins(game.map);
+            UpdateLivesIndicator(game.LivesCount);
+            UpdateScoreLabel();
+        }
+
+        private void UpdateScoreLabel()
+        {
+            label1.Text = $"Score : {game.CurrentScore}";
         }
     }
 }

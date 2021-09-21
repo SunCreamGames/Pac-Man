@@ -9,12 +9,15 @@ namespace Model.PacMan
         private Graph map;
         private Vertex currentVertex;
         public Direction CurrentDirection { get; protected set; }
-        public Game.Position Position { get; }
+        public Game.Position Position { get; private set; }
+        protected Random r;
 
         public Ghost(Graph map, Vertex startPoint)
         {
             this.map = map;
             currentVertex = startPoint;
+            r = new Random();
+
             Position = new Game.Position()
             {
                 X = 8 + currentVertex.Coordinate.Item1 * 16,
@@ -24,7 +27,19 @@ namespace Model.PacMan
             MakeDecision();
         }
 
-        public void UpdatePosition()
+        public void SetCurrentVertex(Vertex v)
+        {
+            currentVertex = v;
+            Position = new Game.Position()
+            {
+                X = 8 + currentVertex.Coordinate.Item1 * 16,
+                Y = 8 + currentVertex.Coordinate.Item2 * 16
+            };
+            CurrentDirection = Direction.Up;
+            MakeDecision();
+        }
+
+    public void UpdatePosition()
         {
             switch (CurrentDirection)
             {
@@ -66,7 +81,6 @@ namespace Model.PacMan
 
         public void MakeDecision()
         {
-            var r = new Random();
             List<Vertex> possibleMoves;
             switch (CurrentDirection)
             {

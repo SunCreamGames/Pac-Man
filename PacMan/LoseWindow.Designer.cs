@@ -1,11 +1,13 @@
-﻿namespace Pac_Man
+namespace Pac_Man
 {
-    partial class Form1
+    using System.ComponentModel;
+
+    partial class LoseWindow
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -29,47 +31,31 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.Timer = new System.Timers.Timer();
             this.label1 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize) (this.Timer)).BeginInit();
             this.SuspendLayout();
-            // 
-            // Timer
-            // 
-            this.Timer.Enabled = true;
-            this.Timer.Interval = 33D;
-            this.Timer.SynchronizingObject = this;
-            this.Timer.Elapsed += new System.Timers.ElapsedEventHandler(this.Timer_Elapsed);
             // 
             // label1
             // 
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (204)));
-            this.label1.Location = new System.Drawing.Point(272, 431);
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (204)));
+            this.label1.Location = new System.Drawing.Point(75, 53);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(184, 53);
+            this.label1.Size = new System.Drawing.Size(638, 227);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Score: ";
-            
-
+            this.label1.Text = "Ghosts beat you! Press \'R\' to fail the same level or \'F\' to play another one.";
             // 
-            // Form1
+            // LoseWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.Maroon;
-            this.ClientSize = new System.Drawing.Size(475, 492);
+            this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.label1);
-            this.Name = "Form1";
-            this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
-            ((System.ComponentModel.ISupportInitialize) (this.Timer)).EndInit();
+            this.Name = "LoseWindow";
+            this.Text = "LoseWindow";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LoseWindow_KeyDown_1);
             this.ResumeLayout(false);
         }
 
         private System.Windows.Forms.Label label1;
-
-        private System.Timers.Timer Timer;
 
         #endregion
     }

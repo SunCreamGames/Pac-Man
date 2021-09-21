@@ -7,7 +7,7 @@ namespace Model.PacMan
     public class Graph
     {
         public Vertex[,] Vertices { get; }
-        public int CoinsLeft => coinsLeft;
+        public int CoinsLeft => walkableVertices.Count(v => v.HasCoin);
         private List<Vertex> walkableVertices;
         public event Action<int, int> OnCoinEaten;
 
@@ -123,6 +123,11 @@ namespace Model.PacMan
         {
             HasCoin = false;
             OnCoinEaten?.Invoke(Coordinate.Item1, Coordinate.Item2);
+        }
+
+        public void SetCoin()
+        {
+            HasCoin = true;
         }
 
         public void SetNeighbours(Vertex dVertex, Vertex rVertex, Vertex uVertex, Vertex lVertex)
