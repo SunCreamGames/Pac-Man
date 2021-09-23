@@ -44,13 +44,13 @@
                 }
             }
 
-            var visited = DFSVisiting(graph, start);
+            var visited = BFSVisiting(graph, start);
             var firstNotSecond = visited.Except(all).ToList();
             var secondNotFirst = all.Except(visited).ToList();
             return firstNotSecond.Any() || secondNotFirst.Any();
         }
 
-        private List<Vertex> DFSVisiting(Graph graph, Vertex start)
+        private List<Vertex> BFSVisiting(Graph graph, Vertex start)
         {
             var visited = new List<Vertex>();
             var available = new Queue<Vertex>();

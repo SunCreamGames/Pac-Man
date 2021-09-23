@@ -7,7 +7,7 @@ namespace Model.PacMan
     public class Ghost
     {
         private Graph map;
-        private Vertex currentVertex;
+        public Vertex CurrentVertex { get; private set; }
         public Direction CurrentDirection { get; protected set; }
         public Game.Position Position { get; private set; }
         protected Random r;
@@ -15,13 +15,13 @@ namespace Model.PacMan
         public Ghost(Graph map, Vertex startPoint)
         {
             this.map = map;
-            currentVertex = startPoint;
+            CurrentVertex = startPoint;
             r = new Random();
 
             Position = new Game.Position()
             {
-                X = 8 + currentVertex.Coordinate.Item1 * 16,
-                Y = 8 + currentVertex.Coordinate.Item2 * 16
+                X = 8 + CurrentVertex.Coordinate.Item1 * 16,
+                Y = 8 + CurrentVertex.Coordinate.Item2 * 16
             };
             CurrentDirection = Direction.Up;
             MakeDecision();
@@ -29,11 +29,11 @@ namespace Model.PacMan
 
         public void SetCurrentVertex(Vertex v)
         {
-            currentVertex = v;
+            CurrentVertex = v;
             Position = new Game.Position()
             {
-                X = 8 + currentVertex.Coordinate.Item1 * 16,
-                Y = 8 + currentVertex.Coordinate.Item2 * 16
+                X = 8 + CurrentVertex.Coordinate.Item1 * 16,
+                Y = 8 + CurrentVertex.Coordinate.Item2 * 16
             };
             CurrentDirection = Direction.Up;
             MakeDecision();
@@ -62,13 +62,13 @@ namespace Model.PacMan
 
         private void UpdateCurrentVertex()
         {
-            var c = currentVertex;
+            var c = CurrentVertex;
             if (Position.Y % 16 == 8 && Position.X % 16 == 8)
             {
-                currentVertex = map.Vertices[Position.Y / 16, Position.X / 16];
+                CurrentVertex = map.Vertices[Position.Y / 16, Position.X / 16];
             }
 
-            if (c != currentVertex)
+            if (c != CurrentVertex)
             {
                 TryMakeDecision();
             }
@@ -85,17 +85,17 @@ namespace Model.PacMan
             switch (CurrentDirection)
             {
                 case Direction.Left:
-                    if (currentVertex.LVertex.IsWalkable == Walkablitity.Wall)
+                    if (CurrentVertex.LVertex.IsWalkable == Walkablitity.Wall)
                     {
                         possibleMoves = new List<Vertex>()
-                            {currentVertex.DVertex, currentVertex.RVertex, currentVertex.UVertex};
+                            {CurrentVertex.DVertex, CurrentVertex.RVertex, CurrentVertex.UVertex};
                         possibleMoves = possibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
-                        if (nextDir == currentVertex.DVertex)
+                        if (nextDir == CurrentVertex.DVertex)
                         {
                             CurrentDirection = Direction.Down;
                         }
-                        else if (nextDir == currentVertex.RVertex)
+                        else if (nextDir == CurrentVertex.RVertex)
                         {
                             CurrentDirection = Direction.Right;
                         }
@@ -108,7 +108,7 @@ namespace Model.PacMan
                     {
                         possibleMoves = new List<Vertex>()
                         {
-                            currentVertex.LVertex, currentVertex.DVertex, currentVertex.RVertex, currentVertex.UVertex
+                            CurrentVertex.LVertex, CurrentVertex.DVertex, CurrentVertex.RVertex, CurrentVertex.UVertex
                         }.Where(v => v != null && v.IsWalkable != Walkablitity.Wall).ToList();
                         if (possibleMoves.Count <= 2)
                         {
@@ -117,15 +117,15 @@ namespace Model.PacMan
 
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
 
-                        if (nextDir == currentVertex.DVertex)
+                        if (nextDir == CurrentVertex.DVertex)
                         {
                             CurrentDirection = Direction.Down;
                         }
-                        else if (nextDir == currentVertex.RVertex)
+                        else if (nextDir == CurrentVertex.RVertex)
                         {
                             CurrentDirection = Direction.Right;
                         }
-                        else if (nextDir == currentVertex.LVertex)
+                        else if (nextDir == CurrentVertex.LVertex)
                         {
                             CurrentDirection = Direction.Left;
                         }
@@ -137,17 +137,17 @@ namespace Model.PacMan
 
                     return;
                 case Direction.Right:
-                    if (currentVertex.RVertex.IsWalkable == Walkablitity.Wall)
+                    if (CurrentVertex.RVertex.IsWalkable == Walkablitity.Wall)
                     {
                         possibleMoves = new List<Vertex>()
-                            {currentVertex.DVertex, currentVertex.LVertex, currentVertex.UVertex};
+                            {CurrentVertex.DVertex, CurrentVertex.LVertex, CurrentVertex.UVertex};
                         possibleMoves = possibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
-                        if (nextDir == currentVertex.DVertex)
+                        if (nextDir == CurrentVertex.DVertex)
                         {
                             CurrentDirection = Direction.Down;
                         }
-                        else if (nextDir == currentVertex.LVertex)
+                        else if (nextDir == CurrentVertex.LVertex)
                         {
                             CurrentDirection = Direction.Left;
                         }
@@ -160,7 +160,7 @@ namespace Model.PacMan
                     {
                         possibleMoves = new List<Vertex>()
                         {
-                            currentVertex.LVertex, currentVertex.DVertex, currentVertex.RVertex, currentVertex.UVertex
+                            CurrentVertex.LVertex, CurrentVertex.DVertex, CurrentVertex.RVertex, CurrentVertex.UVertex
                         }.Where(v => v != null && v.IsWalkable != Walkablitity.Wall).ToList();
                         if (possibleMoves.Count <= 2)
                         {
@@ -169,15 +169,15 @@ namespace Model.PacMan
 
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
 
-                        if (nextDir == currentVertex.DVertex)
+                        if (nextDir == CurrentVertex.DVertex)
                         {
                             CurrentDirection = Direction.Down;
                         }
-                        else if (nextDir == currentVertex.RVertex)
+                        else if (nextDir == CurrentVertex.RVertex)
                         {
                             CurrentDirection = Direction.Right;
                         }
-                        else if (nextDir == currentVertex.LVertex)
+                        else if (nextDir == CurrentVertex.LVertex)
                         {
                             CurrentDirection = Direction.Left;
                         }
@@ -190,17 +190,17 @@ namespace Model.PacMan
                     return;
 
                 case Direction.Up:
-                    if (currentVertex.UVertex.IsWalkable == Walkablitity.Wall)
+                    if (CurrentVertex.UVertex.IsWalkable == Walkablitity.Wall)
                     {
                         possibleMoves = new List<Vertex>()
-                            {currentVertex.DVertex, currentVertex.LVertex, currentVertex.RVertex};
+                            {CurrentVertex.DVertex, CurrentVertex.LVertex, CurrentVertex.RVertex};
                         possibleMoves = possibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
-                        if (nextDir == currentVertex.DVertex)
+                        if (nextDir == CurrentVertex.DVertex)
                         {
                             CurrentDirection = Direction.Down;
                         }
-                        else if (nextDir == currentVertex.LVertex)
+                        else if (nextDir == CurrentVertex.LVertex)
                         {
                             CurrentDirection = Direction.Left;
                         }
@@ -213,7 +213,7 @@ namespace Model.PacMan
                     {
                         possibleMoves = new List<Vertex>()
                         {
-                            currentVertex.LVertex, currentVertex.DVertex, currentVertex.RVertex, currentVertex.UVertex
+                            CurrentVertex.LVertex, CurrentVertex.DVertex, CurrentVertex.RVertex, CurrentVertex.UVertex
                         }.Where(v => v != null && v.IsWalkable != Walkablitity.Wall).ToList();
                         if (possibleMoves.Count <= 2)
                         {
@@ -222,15 +222,15 @@ namespace Model.PacMan
 
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
 
-                        if (nextDir == currentVertex.DVertex)
+                        if (nextDir == CurrentVertex.DVertex)
                         {
                             CurrentDirection = Direction.Down;
                         }
-                        else if (nextDir == currentVertex.RVertex)
+                        else if (nextDir == CurrentVertex.RVertex)
                         {
                             CurrentDirection = Direction.Right;
                         }
-                        else if (nextDir == currentVertex.LVertex)
+                        else if (nextDir == CurrentVertex.LVertex)
                         {
                             CurrentDirection = Direction.Left;
                         }
@@ -243,17 +243,17 @@ namespace Model.PacMan
                     return;
 
                 case Direction.Down:
-                    if (currentVertex.DVertex.IsWalkable == Walkablitity.Wall)
+                    if (CurrentVertex.DVertex.IsWalkable == Walkablitity.Wall)
                     {
                         possibleMoves = new List<Vertex>()
-                            {currentVertex.UVertex, currentVertex.LVertex, currentVertex.RVertex};
+                            {CurrentVertex.UVertex, CurrentVertex.LVertex, CurrentVertex.RVertex};
                         possibleMoves = possibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
-                        if (nextDir == currentVertex.UVertex)
+                        if (nextDir == CurrentVertex.UVertex)
                         {
                             CurrentDirection = Direction.Up;
                         }
-                        else if (nextDir == currentVertex.LVertex)
+                        else if (nextDir == CurrentVertex.LVertex)
                         {
                             CurrentDirection = Direction.Left;
                         }
@@ -266,7 +266,7 @@ namespace Model.PacMan
                     {
                         possibleMoves = new List<Vertex>()
                         {
-                            currentVertex.LVertex, currentVertex.DVertex, currentVertex.RVertex, currentVertex.UVertex
+                            CurrentVertex.LVertex, CurrentVertex.DVertex, CurrentVertex.RVertex, CurrentVertex.UVertex
                         }.Where(v => v != null && v.IsWalkable != Walkablitity.Wall).ToList();
                         if (possibleMoves.Count <= 2)
                         {
@@ -275,15 +275,15 @@ namespace Model.PacMan
 
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
 
-                        if (nextDir == currentVertex.DVertex)
+                        if (nextDir == CurrentVertex.DVertex)
                         {
                             CurrentDirection = Direction.Down;
                         }
-                        else if (nextDir == currentVertex.RVertex)
+                        else if (nextDir == CurrentVertex.RVertex)
                         {
                             CurrentDirection = Direction.Right;
                         }
-                        else if (nextDir == currentVertex.LVertex)
+                        else if (nextDir == CurrentVertex.LVertex)
                         {
                             CurrentDirection = Direction.Left;
                         }

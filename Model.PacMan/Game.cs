@@ -22,6 +22,10 @@ namespace Model.PacMan
         private Clyde orange;
         private Direction inputDir;
         public int CurrentScore { get; private set; }
+        public Vertex PlayerCell => player.currentVertex;
+
+        public Vertex[] GhostCells => new Vertex[]
+            {red.CurrentVertex, pink.CurrentVertex, blue.CurrentVertex, orange.CurrentVertex};
 
 
         public Game(IMazeCreator mapGenerator)

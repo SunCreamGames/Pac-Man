@@ -3,6 +3,7 @@ namespace Model.PacMan
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.Remoting.Messaging;
 
     public class Graph
     {
@@ -43,6 +44,158 @@ namespace Model.PacMan
             }
 
             SetNeighbours();
+        }
+
+        public (int, int, List<(int, List<Vertex>)>) BFS(Vertex start, Vertex[] end)
+        {
+            MyTimer timer = new MyTimer();
+            timer.Start();
+            int distance = 0;
+            Vertex curVer;
+            var visited = new List<Vertex>();
+            var available = new Queue<Vertex>();
+            available.Enqueue(start);
+
+            while (!(visited.Contains(end[0]) && visited.Contains(end[1]) && visited.Contains(end[2]) &&
+                     visited.Contains(end[3])))
+            {
+                curVer = available.Dequeue();
+                var neighbours = new List<Vertex>() {curVer.DVertex, curVer.LVertex, curVer.RVertex, curVer.UVertex};
+                neighbours = neighbours
+                    .Where(v => v != null && v.IsWalkable != Walkablitity.Wall && !visited.Contains(v)).ToList();
+                foreach (var neighbour in neighbours)
+                {
+                    available.Enqueue(neighbour);
+                    neighbour.PreviousVertex = curVer;
+                }
+
+                visited.Add(curVer);
+            }
+
+            var result = new List<(int, List<Vertex>)>();
+            foreach (var vertex in end)
+            {
+                var way = new List<Vertex>();
+                curVer = vertex;
+                while (curVer.PreviousVertex != null)
+                {
+                    way.Add(curVer);
+                    curVer = curVer.PreviousVertex;
+                    distance++;
+                }
+
+                result.Add((distance, way));
+                distance = 0;
+            }
+
+            visited.Clear();
+            available.Clear();
+            return (distance, timer.End(), result);
+        }
+
+        public (int, int, List<(int, List<Vertex>)>) DFS(Vertex start, Vertex[] end)
+        {
+            MyTimer timer = new MyTimer();
+            timer.Start();
+            int distance = 0;
+            Vertex curVer;
+            var visited = new List<Vertex>();
+            var available = new Stack<Vertex>();
+            available.Push(start);
+
+            while (!(visited.Contains(end[0]) && visited.Contains(end[1]) && visited.Contains(end[2]) &&
+                     visited.Contains(end[3])))
+            {
+                curVer = available.Pop();
+                var neighbours = new List<Vertex>() {curVer.DVertex, curVer.LVertex, curVer.RVertex, curVer.UVertex};
+                neighbours = neighbours
+                    .Where(v => v != null && v.IsWalkable == Walkablitity.Walkable && !visited.Contains(v)).ToList();
+                foreach (var neighbour in neighbours)
+                {
+                    available.Push(neighbour);
+                    neighbour.PreviousVertex = curVer;
+                }
+
+                visited.Add(curVer);
+            }
+
+            var result = new List<(int, List<Vertex>)>();
+            foreach (var vertex in end)
+            {
+                var way = new List<Vertex>();
+                curVer = vertex;
+                while (curVer.PreviousVertex != null)
+                {
+                    way.Add(curVer);
+                    curVer = curVer.PreviousVertex;
+                    distance++;
+                }
+
+                result.Add((distance, way));
+                distance = 0;
+            }
+
+            return (distance, timer.End(), result);
+        }
+
+        public (int, int, List<(int, List<Vertex>)>) UnInformCostSearch(Vertex start, Vertex[] end)
+        {
+            var timer = new MyTimer();
+            timer.Start();
+            List<Vertex> visited = new List<Vertex>();
+            List<Vertex> available = new List<Vertex>() {start};
+            var distance = 0;
+            Dictionary<Vertex, int> costs = new Dictionary<Vertex, int>();
+            costs[start] = 0;
+            Vertex currentVertex;
+
+            while (!(visited.Contains(end[0]) && visited.Contains(end[1]) && visited.Contains(end[2]) &&
+                     visited.Contains(end[3])))
+            {
+                currentVertex = available.FirstOrDefault(v => costs[v] == costs.Values.Min() && !visited.Contains(v));
+                visited.Add(currentVertex);
+                
+                var neighbours = new List<Vertex>()
+                    {currentVertex.DVertex, currentVertex.LVertex, currentVertex.RVertex, currentVertex.UVertex};
+                neighbours = neighbours
+                    .Where(v => v != null && v.IsWalkable != Walkablitity.Wall && !visited.Contains(v)).ToList();
+                foreach (var neighbour in neighbours)
+                {
+                    available.Add(neighbour);
+                    neighbour.PreviousVertex = currentVertex;
+                    if (costs.ContainsKey(neighbour))
+                    {
+                        if (costs[neighbour] > costs[currentVertex] + 1)
+                        {
+                            costs[neighbour] = costs[currentVertex] + 1;
+                            neighbour.PreviousVertex = currentVertex;
+                        }
+                    }
+                    else
+                    {
+                        costs[neighbour] = costs[currentVertex] + 1;
+                        neighbour.PreviousVertex = currentVertex;
+                    }
+                }
+            }
+
+            var result = new List<(int, List<Vertex>)>();
+            foreach (var vertex in end)
+            {
+                var way = new List<Vertex>();
+                currentVertex = vertex;
+                while (currentVertex.PreviousVertex != null)
+                {
+                    way.Add(currentVertex);
+                    currentVertex = currentVertex.PreviousVertex;
+                    distance++;
+                }
+
+                result.Add((distance, way));
+                distance = 0;
+            }
+
+            return (distance, timer.End(), result);
         }
 
         private void CoinEaten(int x, int y)
@@ -111,6 +264,7 @@ namespace Model.PacMan
         public bool HasCoin { get; private set; }
         public (int, int) Coordinate { get; set; }
 
+        public Vertex PreviousVertex { get; set; }
 
         public Vertex(Walkablitity isWalkable, int x, int y)
         {

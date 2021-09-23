@@ -23,8 +23,8 @@ namespace Pac_Man
         private PictureBox pacMan;
         private PictureBox redBox, orangeBox, pinkBox, blueBox;
         private bool paused;
-        Image wall, coin;
-
+        private Image wall, coin;
+        private Algorithm curAlg;
         private WinWindow winWindow;
         private LoseWindow loseWindow;
 
@@ -40,8 +40,9 @@ namespace Pac_Man
         private void Form1_Load(object sender, EventArgs e)
         {
             LoadImages();
-            Size = new Size(new Point(400, 420));
+            Size = new Size(new Point(400, 450));
             game = new Game(new MazeGenerator());
+            curAlg = Algorithm.UIS;
             direction = Direction.Left;
             game.DrawCall += DrawFrame;
             game.OnCoinEaten += DestroyCoin;
@@ -173,6 +174,34 @@ namespace Pac_Man
         {
             DrawPacman(pacman, frameNumber);
             DrawGhosts(red, orange, pink, blue, frameNumber);
+        }
+
+        private void UpdateAlgLabel()
+        {
+            (int, int, List<(int, List<Vertex>)>) answer;
+
+            switch (curAlg)
+            {
+                case Algorithm.BFS:
+                    answer = game.map.BFS(game.PlayerCell, game.GhostCells);
+                    DrawWay(answer.Item3);
+                    label2.Text = $" BFS : {answer.Item2}ms";
+                    break;
+                case Algorithm.DFS:
+                    answer = game.map.DFS(game.PlayerCell, game.GhostCells);
+                    DrawWay(answer.Item3);
+                    label2.Text = $" DFS : {answer.Item2}ms";
+                    break;
+                case Algorithm.UIS:
+                    answer = game.map.DFS(game.PlayerCell, game.GhostCells);
+                    DrawWay(answer.Item3);
+                    label2.Text = $" UIS : {answer.Item2}ms";
+                    break;
+            }
+        }
+
+        private void DrawWay(List<(int, List<Vertex>)> ways)
+        {
         }
 
         private void DrawGhosts(Ghost red, Ghost orange, Ghost pink, Ghost blue, int frameNumber)
@@ -467,8 +496,12 @@ namespace Pac_Man
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (!paused)
+            {
                 game.UpdateFrame(direction);
+                UpdateAlgLabel();
+            }
         }
+
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -573,5 +606,12 @@ namespace Pac_Man
         {
             label1.Text = $"Score : {game.CurrentScore}";
         }
+    }
+
+    enum Algorithm
+    {
+        DFS,
+        BFS,
+        UIS
     }
 }
