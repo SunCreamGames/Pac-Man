@@ -20,21 +20,19 @@ namespace Model.PacMan
 
         public async Task<(long, List<(int, List<Vertex>)>)> FindPath()
         {
-
             if (start == null || end.Contains(null))
             {
                 throw new Exception("Start or target cell is null");
             }
-            
+
             var visited = new List<Vertex>();
-            var timer = System.Diagnostics.Stopwatch.StartNew();
-
-
-            timer.Start();
             int distance = 0;
             Vertex curVer = start;
             var available = new Queue<Vertex>();
             available.Enqueue(start);
+
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            timer.Start();
 
             while (!(visited.Contains(end[0]) && visited.Contains(end[1]) && visited.Contains(end[2]) &&
                      visited.Contains(end[3])))
@@ -76,6 +74,9 @@ namespace Model.PacMan
                 visited.Add(curVer);
             }
 
+            timer.Stop();
+            var elapsedMs = timer.ElapsedMilliseconds;
+
             var result = new List<(int, List<Vertex>)>();
             foreach (var vertex in end)
             {
@@ -92,13 +93,11 @@ namespace Model.PacMan
                 distance = 0;
             }
 
-            timer.Stop();
-            var elapsedMs = timer.ElapsedMilliseconds;
             visited = null;
             GC.Collect();
             return (elapsedMs, result);
         }
-        
+
         public string GetName()
         {
             return Name;

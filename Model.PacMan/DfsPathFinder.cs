@@ -28,14 +28,13 @@ namespace Model.PacMan
 
             var visited = new List<Vertex>();
 
-            var timer = System.Diagnostics.Stopwatch.StartNew();
-
-
-            timer.Start();
             var distance = 0;
             var curVer = start;
             var available = new Stack<Vertex>();
             available.Push(start);
+
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            timer.Start();
 
             while (!(visited.Contains(end[0]) && visited.Contains(end[1]) && visited.Contains(end[2]) &&
                      visited.Contains(end[3])))
@@ -75,6 +74,9 @@ namespace Model.PacMan
                 visited.Add(curVer);
             }
 
+            timer.Stop();
+            var elapsedMs = timer.ElapsedMilliseconds;
+            
             visited = null;
             GC.Collect();
             var result = new List<(int, List<Vertex>)>();
@@ -93,13 +95,11 @@ namespace Model.PacMan
                 distance = 0;
             }
 
-            timer.Stop();
-            var elapsedMs = timer.ElapsedMilliseconds;
             available = null;
             GC.Collect();
             return (elapsedMs, result);
         }
-        
+
         public string GetName()
         {
             return Name;

@@ -224,7 +224,7 @@ namespace Pac_Man
                 ways.Add(pb);
             }
 
-            // paused = true;
+            paused = true;
         }
 
         private void DrawGhosts(Ghost red, Ghost orange, Ghost pink, Ghost blue, int frameNumber)

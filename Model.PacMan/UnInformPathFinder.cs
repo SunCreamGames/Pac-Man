@@ -25,10 +25,11 @@ namespace Model.PacMan
 
             var distance = 0;
             var curVer = start;
+            start.Cost = 0;
+
 
             var timer = System.Diagnostics.Stopwatch.StartNew();
             timer.Start();
-            start.Cost = 0;
 
             while (!(visited.Contains(end[0]) && visited.Contains(end[1]) && visited.Contains(end[2]) &&
                      visited.Contains(end[3])))
@@ -54,13 +55,18 @@ namespace Model.PacMan
                     }
                 }
 
-                curVer = available.OrderBy(v => v.Cost).LastOrDefault();
-                visited.Add(curVer);
+                curVer = available.Aggregate((curMin, v) => (curMin == null || (v.Cost <
+                    curMin.Cost))
+                    ? v
+                    : curMin);
 
+                visited.Add(curVer);
+                available.Remove(curVer);
                 var neighbours = new List<Vertex>()
                     {curVer.DVertex, curVer.LVertex, curVer.RVertex, curVer.UVertex};
                 neighbours = neighbours
-                    .Where(v => v != null && v.IsWalkable != Walkablitity.Wall && !visited.Contains(v)).ToList();
+                    .Where(v => v != null && v.IsWalkable != Walkablitity.Wall && !visited.Contains(v) &&
+                                !available.Contains(v)).ToList();
                 foreach (var neighbour in neighbours)
                 {
                     available.Add(neighbour);
@@ -81,6 +87,9 @@ namespace Model.PacMan
                 }
             }
 
+            timer.Stop();
+            var elapsedMs = timer.ElapsedMilliseconds;
+
             var result = new List<(int, List<Vertex>)>();
             foreach (var vertex in end)
             {
@@ -97,8 +106,6 @@ namespace Model.PacMan
                 distance = 0;
             }
 
-            timer.Stop();
-            var elapsedMs = timer.ElapsedMilliseconds;
             available = null;
             visited = null;
             GC.Collect();
