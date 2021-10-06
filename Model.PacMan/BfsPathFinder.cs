@@ -75,7 +75,7 @@ namespace Model.PacMan
             }
 
             timer.Stop();
-            var elapsedMs = timer.ElapsedMilliseconds;
+            var elapsedMs = timer.ElapsedTicks;
 
             var result = new List<(int, List<Vertex>)>();
             foreach (var vertex in end)

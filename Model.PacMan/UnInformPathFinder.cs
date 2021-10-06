@@ -55,6 +55,7 @@ namespace Model.PacMan
                     }
                 }
 
+                timer.Stop();
                 curVer = available.Aggregate((curMin, v) => (curMin == null || (v.Cost <
                     curMin.Cost))
                     ? v
@@ -62,6 +63,8 @@ namespace Model.PacMan
 
                 visited.Add(curVer);
                 available.Remove(curVer);
+                timer.Start();
+
                 var neighbours = new List<Vertex>()
                     {curVer.DVertex, curVer.LVertex, curVer.RVertex, curVer.UVertex};
                 neighbours = neighbours
@@ -88,7 +91,7 @@ namespace Model.PacMan
             }
 
             timer.Stop();
-            var elapsedMs = timer.ElapsedMilliseconds;
+            var elapsedMs = timer.ElapsedTicks;
 
             var result = new List<(int, List<Vertex>)>();
             foreach (var vertex in end)

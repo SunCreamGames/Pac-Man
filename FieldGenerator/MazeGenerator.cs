@@ -14,23 +14,23 @@
         {
             int[,] map;
 
-            do
-            {
-                map = new int[9, 5];
+            // do
+            // {
+                map = new int[18, 10];
                 map[3, 0] = map[3, 1] = map[4, 0] = map[4, 1] = 1;
                 map = FillWithTetramino(map);
                 map = MakeRoads(map);
 
                 map = MakeFullMap(map);
                 map = AddFinalWall(CreateTiledMap(map));
-            } while (IsFullConnected(map));
+            // } while (IsFullConnected(map));
 
             return map;
         }
 
         private bool IsFullConnected(int[,] map)
         {
-            var graph = new Graph(map, new List<IPathFinder>(){new MockPathFinder()});
+            var graph = new Graph(map, new List<IPathFinder>() {new MockPathFinder()});
             var start = graph.GetRandomWalkableVertex();
             var all = new List<Vertex>();
             for (int i = 0; i < map.GetLength(0); i++)
@@ -290,7 +290,7 @@
         private int[,] MakeRoads(int[,] halfMap)
         {
             var r = new Random();
-            var mapWithRoads = new int[19, 6];
+            var mapWithRoads = new int[halfMap.GetLength(0) * 2 + 1, halfMap.GetLength(1) + 1];
 
             // 0 == didn't calculated
 
@@ -355,7 +355,7 @@
                         continue;
                     }
 
-                    if (i == 18)
+                    if (i == mapWithRoads.GetLength(0) - 1)
                     {
                         mapWithRoads[i, j] = 1;
                         continue;
@@ -365,6 +365,11 @@
 
                     if (i % 2 == 0)
                     {
+                        if (j == halfMap.GetLength(1))
+                        {
+                            continue;
+                        }
+
                         if (halfMap[i / 2, j] != halfMap[i / 2 - 1, j])
                         {
                             mapWithRoads[i, j] = 1;
@@ -376,6 +381,11 @@
                     }
                     else
                     {
+                        if (j == halfMap.GetLength(1))
+                        {
+                            continue;
+                        }
+
                         if (halfMap[i / 2, j] != halfMap[i / 2, j - 1])
                         {
                             mapWithRoads[i, j] = 1;

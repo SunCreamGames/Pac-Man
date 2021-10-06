@@ -51,7 +51,7 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Score: ";
             // 
-            // label2
+            // pfLabel
             // 
             this.pfLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (204)));
             this.pfLabel.Location = new System.Drawing.Point(236, 480);
@@ -65,7 +65,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Maroon;
-            this.ClientSize = new System.Drawing.Size(475, 528);
+            this.ClientSize = new System.Drawing.Size(1100, 1100);
             this.Controls.Add(this.pfLabel);
             this.Controls.Add(this.label1);
             this.Name = "Form1";

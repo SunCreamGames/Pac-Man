@@ -75,7 +75,7 @@ namespace Model.PacMan
             }
 
             timer.Stop();
-            var elapsedMs = timer.ElapsedMilliseconds;
+            var elapsedMs = timer.ElapsedTicks;
             
             visited = null;
             GC.Collect();
