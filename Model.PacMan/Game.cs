@@ -36,7 +36,7 @@ namespace Model.PacMan
             mapGen = mapGenerator;
             var matrix = mapGen.GenerateMap(10, 10);
             map = new Graph(matrix, 
-                new List<IPathFinder>() { new BfsPathFinder(), new DfsPathFinder()});
+                new List<IPathFinder>() { new BfsPathFinder(), new DfsPathFinder(),new UnInformPathFinder()});
             map.OnCoinEaten += CoinEaten;
             inputDir = Direction.Left;
             CurrentScore = 0;

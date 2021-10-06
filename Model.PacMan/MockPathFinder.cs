@@ -14,5 +14,10 @@ namespace Model.PacMan
         {
             throw new System.NotImplementedException();
         }
+
+        public string GetName()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

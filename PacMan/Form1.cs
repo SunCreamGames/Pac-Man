@@ -183,14 +183,7 @@ namespace Pac_Man
             (long, List<(int, List<Vertex>)>) answer;
             answer = await game.map.FindPath(game.PlayerCell, game.GhostCells);
             DrawWay(answer.Item2);
-
-
-            label2.Text = $"{curAlg}:{answer.Item1.ToString()}";
-            // case Algorithm.UIS:
-            //     answer = await game.map.UnInformCostSearch(game.PlayerCell, game.GhostCells);
-            //     DrawWay(answer.Item3);
-            //     label2.Text = $" UIS : {answer.Item2}ms";
-            //     break;
+            pfLabel.Text = $"{game.map.PathFindingAlgorithmName}:{answer.Item1}";
         }
 
         private void DrawWay(List<(int, List<Vertex>)> stepsWay)

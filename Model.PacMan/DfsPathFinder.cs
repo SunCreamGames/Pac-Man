@@ -7,8 +7,11 @@ namespace Model.PacMan
 
     public class DfsPathFinder : IPathFinder
     {
+        public readonly string Name = "DFS";
+
         private Vertex start;
         private Vertex[] end;
+
 
         public void SetPoints(Vertex start, Vertex[] end)
         {
@@ -29,8 +32,8 @@ namespace Model.PacMan
 
 
             timer.Start();
-            int distance = 0;
-            Vertex curVer = start;
+            var distance = 0;
+            var curVer = start;
             var available = new Stack<Vertex>();
             available.Push(start);
 
@@ -51,16 +54,15 @@ namespace Model.PacMan
                             .Where(v => visited.Contains(v)).ToList().FirstOrDefault();
                         if (vertex.PreviousVertex == null)
                         {
+                            throw new Exception("No ways to visit ghost cell");
                         }
-                        else
-                        {
-                            visited.Add(vertex);
-                        }
+
+                        visited.Add(vertex);
                     }
                 }
 
                 curVer = available.Pop();
-                var neighbours = new List<Vertex>() {curVer.DVertex, curVer.LVertex, curVer.RVertex, curVer.UVertex};
+                var neighbours = new List<Vertex>() {curVer.RVertex, curVer.DVertex, curVer.LVertex, curVer.UVertex};
                 neighbours = neighbours
                     .Where(v => v != null && v.IsWalkable != Walkablitity.Wall && !visited.Contains(v) &&
                                 !available.Contains(v)).ToList();
@@ -96,6 +98,11 @@ namespace Model.PacMan
             available = null;
             GC.Collect();
             return (elapsedMs, result);
+        }
+        
+        public string GetName()
+        {
+            return Name;
         }
     }
 }

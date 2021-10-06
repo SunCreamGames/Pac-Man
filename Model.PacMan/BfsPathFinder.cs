@@ -7,6 +7,8 @@ namespace Model.PacMan
 
     public class BfsPathFinder : IPathFinder
     {
+        public readonly string Name = "BFS";
+
         private Vertex start;
         private Vertex[] end;
 
@@ -95,6 +97,11 @@ namespace Model.PacMan
             visited = null;
             GC.Collect();
             return (elapsedMs, result);
+        }
+        
+        public string GetName()
+        {
+            return Name;
         }
     }
 }
