@@ -1,13 +1,14 @@
 namespace Model.PacMan
 {
     using System;
+    using System.Collections.Generic;
     using System.Data;
     using System.Security.Cryptography;
 
     public class Game
     {
         public Graph map;
-        private int frameCounter;
+        public int FrameCounter { get; private set; }
         private IMazeCreator mapGen;
         public event Action<Graph, Pacman, Ghost, Ghost, Ghost, Ghost, int> DrawCall;
         public event Action OnLevelCompleted;
@@ -31,10 +32,11 @@ namespace Model.PacMan
         public Game(IMazeCreator mapGenerator)
         {
             livesCount = 3;
-            frameCounter = 1;
+            FrameCounter = 1;
             mapGen = mapGenerator;
             var matrix = mapGen.GenerateMap(10, 10);
-            map = new Graph(matrix);
+            map = new Graph(matrix, 
+                new List<IPathFinder>() { new BfsPathFinder(), new DfsPathFinder()});
             map.OnCoinEaten += CoinEaten;
             inputDir = Direction.Left;
             CurrentScore = 0;
@@ -79,9 +81,9 @@ namespace Model.PacMan
         {
             MakeDecisions(input);
             MoveAll();
-            frameCounter++;
-            frameCounter %= 10;
-            DrawCall?.Invoke(map, player, red, orange, pink, blue, frameCounter);
+            FrameCounter++;
+            FrameCounter %= 30;
+            DrawCall?.Invoke(map, player, red, orange, pink, blue, FrameCounter);
             CheckLose();
         }
 
@@ -136,5 +138,6 @@ namespace Model.PacMan
             public int X { get; set; }
             public int Y { get; set; }
         }
+
     }
 }

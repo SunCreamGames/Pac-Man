@@ -10,7 +10,7 @@ namespace Model.PacMan
         {
             CurrentDirection = Direction.Left;
             this.map = map;
-            r = new Random(2);
+            r = new Random(7);
 
         }
     }

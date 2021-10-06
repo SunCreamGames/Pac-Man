@@ -3,21 +3,33 @@ namespace Model.PacMan
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using System.Runtime.Remoting.Messaging;
 
     public class Graph
     {
         public Vertex[,] Vertices { get; }
         public int CoinsLeft => walkableVertices.Count(v => v.HasCoin);
-        private List<Vertex> walkableVertices;
+        private List<Vertex> walkableVertices, notWallVetritices;
         public event Action<int, int> OnCoinEaten;
 
         private int coinsLeft;
+        private IPathFinder currentPathFinder;
+        private List<IPathFinder> pathFinders;
 
-        public Graph(int[,] mapMatrix)
+        public Graph(int[,] mapMatrix, List<IPathFinder> pathFinders)
         {
+            if (pathFinders.Count == 0)
+            {
+                throw new Exception("There is now pathfinders for constructing graph");
+            }
+
+            this.pathFinders = pathFinders;
+
+            currentPathFinder = pathFinders[0];
             Vertices = new Vertex[mapMatrix.GetLength(0), mapMatrix.GetLength(1)];
             walkableVertices = new List<Vertex>();
+            notWallVetritices = new List<Vertex>();
             coinsLeft = 0;
             for (int i = 0; i < Vertices.GetLength(0); i++)
             {
@@ -27,16 +39,20 @@ namespace Model.PacMan
                     if (mapMatrix[i, j] == 2)
                     {
                         w = Walkablitity.Wall;
+                        Vertices[i, j] = new Vertex(w, i, j);
                     }
                     else if (mapMatrix[i, j] == 3)
                     {
                         w = Walkablitity.Pen;
+                        Vertices[i, j] = new Vertex(w, i, j);
+                        notWallVetritices.Add(Vertices[i, j]);
                     }
 
                     Vertices[i, j] = new Vertex(w, i, j);
                     if (Vertices[i, j].IsWalkable == Walkablitity.Walkable)
                     {
                         walkableVertices.Add(Vertices[i, j]);
+                        notWallVetritices.Add(Vertices[i, j]);
                         Vertices[i, j].OnCoinEaten += CoinEaten;
                         coinsLeft++;
                     }
@@ -46,138 +62,49 @@ namespace Model.PacMan
             SetNeighbours();
         }
 
-        public (int, int, List<(int, List<Vertex>)>) BFS(Vertex start, Vertex[] end)
+        public void UpdatePathFinder()
         {
-            MyTimer timer = new MyTimer();
-            timer.Start();
-            int distance = 0;
-            Vertex curVer;
-            var visited = new List<Vertex>();
-            var available = new Queue<Vertex>();
-            available.Enqueue(start);
-
-            while (!(visited.Contains(end[0]) && visited.Contains(end[1]) && visited.Contains(end[2]) &&
-                     visited.Contains(end[3])))
-            {
-                curVer = available.Dequeue();
-                var neighbours = new List<Vertex>() {curVer.DVertex, curVer.LVertex, curVer.RVertex, curVer.UVertex};
-                neighbours = neighbours
-                    .Where(v => v != null && v.IsWalkable != Walkablitity.Wall && !visited.Contains(v)).ToList();
-                foreach (var neighbour in neighbours)
-                {
-                    available.Enqueue(neighbour);
-                    neighbour.PreviousVertex = curVer;
-                }
-
-                visited.Add(curVer);
-            }
-
-            var result = new List<(int, List<Vertex>)>();
-            foreach (var vertex in end)
-            {
-                var way = new List<Vertex>();
-                curVer = vertex;
-                while (curVer.PreviousVertex != null)
-                {
-                    way.Add(curVer);
-                    curVer = curVer.PreviousVertex;
-                    distance++;
-                }
-
-                result.Add((distance, way));
-                distance = 0;
-            }
-
-            visited.Clear();
-            available.Clear();
-            return (distance, timer.End(), result);
+            var currentPFIndex = pathFinders.IndexOf(currentPathFinder);
+            currentPathFinder = pathFinders[(currentPFIndex + 1) % (pathFinders.Count - 1)];
         }
 
-        public (int, int, List<(int, List<Vertex>)>) DFS(Vertex start, Vertex[] end)
+        public async Task<(int, int, List<(int, List<Vertex>)>)> UnInformCostSearch(Vertex start, Vertex[] end)
         {
-            MyTimer timer = new MyTimer();
-            timer.Start();
-            int distance = 0;
-            Vertex curVer;
-            var visited = new List<Vertex>();
-            var available = new Stack<Vertex>();
-            available.Push(start);
 
-            while (!(visited.Contains(end[0]) && visited.Contains(end[1]) && visited.Contains(end[2]) &&
-                     visited.Contains(end[3])))
-            {
-                curVer = available.Pop();
-                var neighbours = new List<Vertex>() {curVer.DVertex, curVer.LVertex, curVer.RVertex, curVer.UVertex};
-                neighbours = neighbours
-                    .Where(v => v != null && v.IsWalkable == Walkablitity.Walkable && !visited.Contains(v)).ToList();
-                foreach (var neighbour in neighbours)
-                {
-                    available.Push(neighbour);
-                    neighbour.PreviousVertex = curVer;
-                }
-
-                visited.Add(curVer);
-            }
-
-            var result = new List<(int, List<Vertex>)>();
-            foreach (var vertex in end)
-            {
-                var way = new List<Vertex>();
-                curVer = vertex;
-                while (curVer.PreviousVertex != null)
-                {
-                    way.Add(curVer);
-                    curVer = curVer.PreviousVertex;
-                    distance++;
-                }
-
-                result.Add((distance, way));
-                distance = 0;
-            }
-
-            return (distance, timer.End(), result);
-        }
-
-        public (int, int, List<(int, List<Vertex>)>) UnInformCostSearch(Vertex start, Vertex[] end)
-        {
-            var timer = new MyTimer();
-            timer.Start();
-            List<Vertex> visited = new List<Vertex>();
             List<Vertex> available = new List<Vertex>() {start};
             var distance = 0;
             Dictionary<Vertex, int> costs = new Dictionary<Vertex, int>();
             costs[start] = 0;
             Vertex currentVertex;
 
-            while (!(visited.Contains(end[0]) && visited.Contains(end[1]) && visited.Contains(end[2]) &&
-                     visited.Contains(end[3])))
-            {
-                currentVertex = available.FirstOrDefault(v => costs[v] == costs.Values.Min() && !visited.Contains(v));
-                visited.Add(currentVertex);
-                
-                var neighbours = new List<Vertex>()
-                    {currentVertex.DVertex, currentVertex.LVertex, currentVertex.RVertex, currentVertex.UVertex};
-                neighbours = neighbours
-                    .Where(v => v != null && v.IsWalkable != Walkablitity.Wall && !visited.Contains(v)).ToList();
-                foreach (var neighbour in neighbours)
-                {
-                    available.Add(neighbour);
-                    neighbour.PreviousVertex = currentVertex;
-                    if (costs.ContainsKey(neighbour))
-                    {
-                        if (costs[neighbour] > costs[currentVertex] + 1)
-                        {
-                            costs[neighbour] = costs[currentVertex] + 1;
-                            neighbour.PreviousVertex = currentVertex;
-                        }
-                    }
-                    else
-                    {
-                        costs[neighbour] = costs[currentVertex] + 1;
-                        neighbour.PreviousVertex = currentVertex;
-                    }
-                }
-            }
+            // while (!(end[0].IsVisited && end[1].IsVisited && end[2].IsVisited && end[3].IsVisited))
+            // {
+            //     currentVertex = available.FirstOrDefault(v => costs[v] == costs.Values.Min() && !v.IsVisited);
+            //     currentVertex.IsVisited = true;
+            //
+            //     var neighbours = new List<Vertex>()
+            //         {currentVertex.DVertex, currentVertex.LVertex, currentVertex.RVertex, currentVertex.UVertex};
+            //     neighbours = neighbours
+            //         .Where(v => v != null && v.IsWalkable != Walkablitity.Wall && v.IsVisited).ToList();
+            //     foreach (var neighbour in neighbours)
+            //     {
+            //         available.Add(neighbour);
+            //         neighbour.PreviousVertex = currentVertex;
+            //         if (costs.ContainsKey(neighbour))
+            //         {
+            //             if (costs[neighbour] > costs[currentVertex] + 1)
+            //             {
+            //                 costs[neighbour] = costs[currentVertex] + 1;
+            //                 neighbour.PreviousVertex = currentVertex;
+            //             }
+            //         }
+            //         else
+            //         {
+            //             costs[neighbour] = costs[currentVertex] + 1;
+            //             neighbour.PreviousVertex = currentVertex;
+            //         }
+            //     }
+            // }
 
             var result = new List<(int, List<Vertex>)>();
             foreach (var vertex in end)
@@ -195,7 +122,7 @@ namespace Model.PacMan
                 distance = 0;
             }
 
-            return (distance, timer.End(), result);
+            return (distance,0, result);
         }
 
         private void CoinEaten(int x, int y)
@@ -250,7 +177,14 @@ namespace Model.PacMan
 
             return vert;
         }
+
+        public async Task<(long, List<(int, List<Vertex>)>)> FindPath(Vertex playerCell, Vertex[] ghostCells)
+        {
+            currentPathFinder.SetPoints(playerCell, ghostCells);
+            return await currentPathFinder.FindPath();
+        }
     }
+
 
     public class Vertex
     {

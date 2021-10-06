@@ -30,7 +30,7 @@
 
         private bool IsFullConnected(int[,] map)
         {
-            var graph = new Graph(map);
+            var graph = new Graph(map, new List<IPathFinder>(){new MockPathFinder()});
             var start = graph.GetRandomWalkableVertex();
             var all = new List<Vertex>();
             for (int i = 0; i < map.GetLength(0); i++)

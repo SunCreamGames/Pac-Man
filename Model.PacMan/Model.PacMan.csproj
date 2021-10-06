@@ -38,6 +38,8 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="BfsPathFinder.cs" />
+        <Compile Include="DfsPathFinder.cs" />
         <Compile Include="Game.cs" />
         <Compile Include="Ghosts\Blinky.cs" />
         <Compile Include="Ghosts\Clyde.cs" />
@@ -46,7 +48,9 @@
         <Compile Include="Ghosts\Twinky.cs" />
         <Compile Include="Graph.cs" />
         <Compile Include="IMazeCreator.cs" />
+        <Compile Include="IPathFinder.cs" />
         <Compile Include="MockMazeCreator.cs" />
+        <Compile Include="MockPathFinder.cs" />
         <Compile Include="Pacman.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>

@@ -39,7 +39,7 @@ namespace Model.PacMan
             MakeDecision();
         }
 
-    public void UpdatePosition()
+        public void UpdatePosition()
         {
             switch (CurrentDirection)
             {
@@ -81,15 +81,23 @@ namespace Model.PacMan
 
         public void MakeDecision()
         {
-            List<Vertex> possibleMoves;
+            List<Vertex> possibleMoves = new List<Vertex>()
+                {CurrentVertex.DVertex, CurrentVertex.RVertex, CurrentVertex.UVertex, CurrentVertex.LVertex};
+
+            var startPossibleMoves = new List<Vertex>()
+                {CurrentVertex.DVertex, CurrentVertex.RVertex, CurrentVertex.UVertex, CurrentVertex.LVertex};
             switch (CurrentDirection)
             {
                 case Direction.Left:
                     if (CurrentVertex.LVertex.IsWalkable == Walkablitity.Wall)
                     {
-                        possibleMoves = new List<Vertex>()
-                            {CurrentVertex.DVertex, CurrentVertex.RVertex, CurrentVertex.UVertex};
-                        possibleMoves = possibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
+                       
+                        possibleMoves = startPossibleMoves.Where(v => v.IsWalkable == Walkablitity.Walkable).ToList();
+                        if (possibleMoves.Count == 0)
+                        {
+                            possibleMoves = startPossibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
+                        }
+
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
                         if (nextDir == CurrentVertex.DVertex)
                         {
@@ -106,10 +114,12 @@ namespace Model.PacMan
                     }
                     else
                     {
-                        possibleMoves = new List<Vertex>()
+                        possibleMoves = startPossibleMoves.Where(v => v.IsWalkable == Walkablitity.Walkable).ToList();
+                        if (possibleMoves.Count == 0)
                         {
-                            CurrentVertex.LVertex, CurrentVertex.DVertex, CurrentVertex.RVertex, CurrentVertex.UVertex
-                        }.Where(v => v != null && v.IsWalkable != Walkablitity.Wall).ToList();
+                            possibleMoves =startPossibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
+                        }
+
                         if (possibleMoves.Count <= 2)
                         {
                             break;
@@ -139,9 +149,16 @@ namespace Model.PacMan
                 case Direction.Right:
                     if (CurrentVertex.RVertex.IsWalkable == Walkablitity.Wall)
                     {
-                        possibleMoves = new List<Vertex>()
-                            {CurrentVertex.DVertex, CurrentVertex.LVertex, CurrentVertex.UVertex};
-                        possibleMoves = possibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
+                        possibleMoves = startPossibleMoves.Where(v => v.IsWalkable == Walkablitity.Walkable).ToList();
+                        if (possibleMoves.Count == 0)
+                        {
+                            possibleMoves =startPossibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
+                        }
+
+                        if (possibleMoves.Count == 0)
+                        {
+                            
+                        }
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
                         if (nextDir == CurrentVertex.DVertex)
                         {
@@ -158,10 +175,12 @@ namespace Model.PacMan
                     }
                     else
                     {
-                        possibleMoves = new List<Vertex>()
+                        possibleMoves = startPossibleMoves.Where(v => v.IsWalkable == Walkablitity.Walkable).ToList();
+                        if (possibleMoves.Count == 0)
                         {
-                            CurrentVertex.LVertex, CurrentVertex.DVertex, CurrentVertex.RVertex, CurrentVertex.UVertex
-                        }.Where(v => v != null && v.IsWalkable != Walkablitity.Wall).ToList();
+                            possibleMoves =startPossibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
+                        }
+
                         if (possibleMoves.Count <= 2)
                         {
                             break;
@@ -192,9 +211,12 @@ namespace Model.PacMan
                 case Direction.Up:
                     if (CurrentVertex.UVertex.IsWalkable == Walkablitity.Wall)
                     {
-                        possibleMoves = new List<Vertex>()
-                            {CurrentVertex.DVertex, CurrentVertex.LVertex, CurrentVertex.RVertex};
-                        possibleMoves = possibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
+                        possibleMoves = startPossibleMoves.Where(v => v.IsWalkable == Walkablitity.Walkable).ToList();
+                        if (possibleMoves.Count == 0)
+                        {
+                            possibleMoves =startPossibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
+                        }
+
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
                         if (nextDir == CurrentVertex.DVertex)
                         {
@@ -211,10 +233,11 @@ namespace Model.PacMan
                     }
                     else
                     {
-                        possibleMoves = new List<Vertex>()
+                        possibleMoves = startPossibleMoves.Where(v => v.IsWalkable == Walkablitity.Walkable).ToList();
+                        if (possibleMoves.Count == 0)
                         {
-                            CurrentVertex.LVertex, CurrentVertex.DVertex, CurrentVertex.RVertex, CurrentVertex.UVertex
-                        }.Where(v => v != null && v.IsWalkable != Walkablitity.Wall).ToList();
+                            possibleMoves =startPossibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
+                        }
                         if (possibleMoves.Count <= 2)
                         {
                             break;
@@ -245,9 +268,12 @@ namespace Model.PacMan
                 case Direction.Down:
                     if (CurrentVertex.DVertex.IsWalkable == Walkablitity.Wall)
                     {
-                        possibleMoves = new List<Vertex>()
-                            {CurrentVertex.UVertex, CurrentVertex.LVertex, CurrentVertex.RVertex};
-                        possibleMoves = possibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
+                        possibleMoves = startPossibleMoves.Where(v => v.IsWalkable == Walkablitity.Walkable).ToList();
+                        if (possibleMoves.Count == 0)
+                        {
+                            possibleMoves =startPossibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
+                        }
+
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
                         if (nextDir == CurrentVertex.UVertex)
                         {
@@ -264,10 +290,12 @@ namespace Model.PacMan
                     }
                     else
                     {
-                        possibleMoves = new List<Vertex>()
+                        possibleMoves = startPossibleMoves.Where(v => v.IsWalkable == Walkablitity.Walkable).ToList();
+                        if (possibleMoves.Count == 0)
                         {
-                            CurrentVertex.LVertex, CurrentVertex.DVertex, CurrentVertex.RVertex, CurrentVertex.UVertex
-                        }.Where(v => v != null && v.IsWalkable != Walkablitity.Wall).ToList();
+                            possibleMoves =startPossibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
+                        }
+
                         if (possibleMoves.Count <= 2)
                         {
                             break;

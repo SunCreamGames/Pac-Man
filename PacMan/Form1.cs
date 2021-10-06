@@ -23,11 +23,11 @@ namespace Pac_Man
         private PictureBox pacMan;
         private PictureBox redBox, orangeBox, pinkBox, blueBox;
         private bool paused;
-        private Image wall, coin;
+        private Image wall, coin, cross;
         private Algorithm curAlg;
         private WinWindow winWindow;
         private LoseWindow loseWindow;
-
+        private List<PictureBox> ways;
         private List<PictureBox> coins;
 
         private Image[] pacmanImages, redImages, pinkImages, orangeImages, blueImages;
@@ -42,7 +42,9 @@ namespace Pac_Man
             LoadImages();
             Size = new Size(new Point(400, 450));
             game = new Game(new MazeGenerator());
-            curAlg = Algorithm.UIS;
+            curAlg = Algorithm.BFS;
+            ways = new List<PictureBox>();
+
             direction = Direction.Left;
             game.DrawCall += DrawFrame;
             game.OnCoinEaten += DestroyCoin;
@@ -176,32 +178,60 @@ namespace Pac_Man
             DrawGhosts(red, orange, pink, blue, frameNumber);
         }
 
-        private void UpdateAlgLabel()
+        private async void CalculatePaths()
         {
-            (int, int, List<(int, List<Vertex>)>) answer;
+            (long, List<(int, List<Vertex>)>) answer;
+            answer = await game.map.FindPath(game.PlayerCell, game.GhostCells);
+            DrawWay(answer.Item2);
 
-            switch (curAlg)
-            {
-                case Algorithm.BFS:
-                    answer = game.map.BFS(game.PlayerCell, game.GhostCells);
-                    DrawWay(answer.Item3);
-                    label2.Text = $" BFS : {answer.Item2}ms";
-                    break;
-                case Algorithm.DFS:
-                    answer = game.map.DFS(game.PlayerCell, game.GhostCells);
-                    DrawWay(answer.Item3);
-                    label2.Text = $" DFS : {answer.Item2}ms";
-                    break;
-                case Algorithm.UIS:
-                    answer = game.map.DFS(game.PlayerCell, game.GhostCells);
-                    DrawWay(answer.Item3);
-                    label2.Text = $" UIS : {answer.Item2}ms";
-                    break;
-            }
+
+            label2.Text = $"{curAlg}:{answer.Item1.ToString()}";
+            // case Algorithm.UIS:
+            //     answer = await game.map.UnInformCostSearch(game.PlayerCell, game.GhostCells);
+            //     DrawWay(answer.Item3);
+            //     label2.Text = $" UIS : {answer.Item2}ms";
+            //     break;
         }
 
-        private void DrawWay(List<(int, List<Vertex>)> ways)
+        private void DrawWay(List<(int, List<Vertex>)> stepsWay)
         {
+            foreach (var pictureBox in ways)
+            {
+                pictureBox.Dispose();
+            }
+
+            ways.Clear();
+
+            var allWaysList = new List<Vertex>();
+            foreach (var way in stepsWay)
+            {
+                foreach (var step in way.Item2)
+                {
+                    if (!allWaysList.Contains(step))
+                    {
+                        allWaysList.Add(step);
+                    }
+                }
+            }
+
+
+            foreach (var vertex in allWaysList)
+            {
+                PictureBox pb = new PictureBox()
+                {
+                    Parent = this,
+                    Location = new Point(16 * (vertex.Coordinate.Item2 + 1) - 5,
+                        16 * (vertex.Coordinate.Item1 + 1) - 5),
+                    Image = cross,
+                    Size = new Size(4, 4),
+                    SizeMode = PictureBoxSizeMode.CenterImage,
+                    Enabled = true,
+                    Visible = true,
+                };
+                ways.Add(pb);
+            }
+
+            // paused = true;
         }
 
         private void DrawGhosts(Ghost red, Ghost orange, Ghost pink, Ghost blue, int frameNumber)
@@ -498,7 +528,11 @@ namespace Pac_Man
             if (!paused)
             {
                 game.UpdateFrame(direction);
-                UpdateAlgLabel();
+
+                if (game.FrameCounter == 0)
+                {
+                    CalculatePaths();
+                }
             }
         }
 
@@ -522,6 +556,27 @@ namespace Pac_Man
                 case Keys.Left:
                     direction = Direction.Left;
                     break;
+                case Keys.Z:
+                    game.map.UpdatePathFinder();
+                    SwitchAlgorithm();
+                    break;
+            }
+        }
+
+        // TODO : REFACTOR THIS SHIT
+        private void SwitchAlgorithm()
+        {
+            switch (curAlg)
+            {
+                case Algorithm.BFS:
+                    curAlg = Algorithm.DFS;
+                    break;
+                case Algorithm.DFS:
+                    curAlg = Algorithm.BFS;
+                    break;
+                // case Algorithm.UIS:
+                //     curAlg = Algorithm.BFS;
+                //     break;
             }
         }
 
@@ -585,6 +640,7 @@ namespace Pac_Man
             };
             wall = Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Field\\wall.png");
             coin = Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Field\\point.png");
+            cross = Image.FromFile("C:\\Users\\Богдан\\Desktop\\Sprites\\Field\\cross.png");
         }
 
         public void RestartLevel()

@@ -10,7 +10,7 @@ namespace Model.PacMan
         public MyTimer()
         {
             miliSecs = 0;
-            timer = new Timer(1);
+            timer = new Timer(1) {AutoReset = true};
         }
 
         private void OnMilisecondPast(object sender, ElapsedEventArgs e)
@@ -22,6 +22,7 @@ namespace Model.PacMan
         {
             miliSecs = 0;
             timer.Elapsed += OnMilisecondPast;
+            timer.Enabled = true;
             timer.Start();
         }
 
@@ -30,6 +31,7 @@ namespace Model.PacMan
             timer.Stop();
             timer.Elapsed -= OnMilisecondPast;
             return miliSecs;
+
         }
     }
 }
