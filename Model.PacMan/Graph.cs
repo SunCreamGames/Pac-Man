@@ -130,6 +130,13 @@ namespace Model.PacMan
             return coinVertices[r.Next(coinVertices.Length)];
         }
 
+        public Vertex GetClosestCoinVertex(Vertex playerPos)
+        {
+            var r = new Random();
+            var coinVertices = walkableVertices.Where(v => v.HasCoin).ToArray();
+            return coinVertices.OrderBy(v => GetHeuristicCost(playerPos, new[] {v})).FirstOrDefault();
+        }
+
         public double GetHeuristicCost(Vertex start, Vertex[] targets)
         {
             var cost = double.MaxValue;

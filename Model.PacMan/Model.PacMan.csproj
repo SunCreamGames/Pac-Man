@@ -38,16 +38,17 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="AI\ChaseGhostDecisionMaker.cs" />
+        <Compile Include="AI\Ghosts\ChaseGhostDecisionMaker.cs" />
+        <Compile Include="AI\Ghosts\IGhostDecisionMaker.cs" />
+        <Compile Include="AI\Ghosts\RandomGhostDecisionMaker.cs" />
         <Compile Include="AI\IDecisionMaker.cs" />
-        <Compile Include="AI\IGhostDecisionMaker.cs" />
-        <Compile Include="AI\PacmanDecisionMaker.cs" />
+        <Compile Include="AI\Pacman\IPacmanDecisionMaker.cs" />
+        <Compile Include="AI\Pacman\PacmanDecisionMaker.cs" />
         <Compile Include="AI\Pathfinding\AStarPathfinder.cs" />
         <Compile Include="AI\Pathfinding\BfsPathFinder.cs" />
         <Compile Include="AI\Pathfinding\DfsPathFinder.cs" />
         <Compile Include="AI\Pathfinding\IPathFinder.cs" />
         <Compile Include="AI\Pathfinding\UnInformPathFinder.cs" />
-        <Compile Include="AI\RandomGhostDecisionMaker.cs" />
         <Compile Include="Game.cs" />
         <Compile Include="Ghosts\Blinky.cs" />
         <Compile Include="Ghosts\Clyde.cs" />

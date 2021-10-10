@@ -138,7 +138,6 @@ namespace Pac_Man
             game.OnCoinEaten -= DestroyCoin;
             game.OnLevelCompleted -= GameWinWindow;
             game.OnPacmanDie -= OnPacmanDie;
-
             Hide();
             loseWindow = new LoseWindow(this);
             loseWindow.Show();

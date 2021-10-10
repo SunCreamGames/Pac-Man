@@ -38,7 +38,7 @@
             // Timer
             // 
             this.Timer.Enabled = true;
-            this.Timer.Interval = 33D;
+            this.Timer.Interval =50D;
             this.Timer.SynchronizingObject = this;
             this.Timer.Elapsed += new System.Timers.ElapsedEventHandler(this.Timer_Elapsed);
             // 

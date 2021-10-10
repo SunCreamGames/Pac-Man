@@ -123,9 +123,9 @@ namespace Model.PacMan
 
 public enum Direction
 {
+    Up,
     Left,
     Right,
-    Up,
     Down,
     None
 }

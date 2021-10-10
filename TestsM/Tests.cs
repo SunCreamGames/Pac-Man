@@ -16,7 +16,7 @@ namespace TestsM
             var matrix = ReadMatrix();
             var a = new Graph(matrix, new List<IPathFinder>() {dfsFPathfinder});
             dfsFPathfinder.SetPoints(a.Vertices[1, 1],
-                new Vertex[] {a.Vertices[1, 12], a.Vertices[7, 1], a.Vertices[7, 12], a.Vertices[7, 7]});
+                new Vertex[] {a.Vertices[1, 12], a.Vertices[7, 1], a.Vertices[7, 12], a.Vertices[7, 7]}, a);
             var x = new List<List<Vertex>>();
             var result = await dfsFPathfinder.FindPath();
 

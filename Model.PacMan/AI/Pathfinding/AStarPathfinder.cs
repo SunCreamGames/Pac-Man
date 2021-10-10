@@ -42,14 +42,11 @@ namespace Model.PacMan
             Vertex curVer;
             start.Cost = 0;
             availableList.Add(start);
-            
-            timer.Start();
-            while (end.All(v => visitedList.Contains(v)))
-            {
-                curVer = availableList.First(v => Math.Abs(v.Cost + grid.GetHeuristicCost(v, end) -
-                                                           availableList.Min(vert =>
-                                                               vert.Cost + grid.GetHeuristicCost(vert, end))) < 0.001f);
 
+            timer.Start();
+            while (end.All(v => !visitedList.Contains(v)))
+            {
+                curVer = availableList.OrderBy(v => v.Cost + grid.GetHeuristicCost(v, end)).First();
                 foreach (var nVertex in curVer.Neighbours.Where(v =>
                     v.IsWalkable != Walkablitity.Wall && !visitedList.Contains(v)))
                 {
@@ -61,6 +58,7 @@ namespace Model.PacMan
                     {
                         nVertex.Cost = curVer.Cost + 1;
                         nVertex.PreviousVertex = curVer;
+                        availableList.Add(nVertex);
                     }
                 }
 
@@ -68,6 +66,7 @@ namespace Model.PacMan
                 visitedList.Add(curVer);
                 availableList.Remove(curVer);
             }
+
             timer.Stop();
 
             var ways = new List<(int, List<Vertex>)>();
@@ -75,12 +74,13 @@ namespace Model.PacMan
             {
                 var way = new List<Vertex>();
                 way.Add(vertex);
-                while (way.Last().PreviousVertex != start)
+                var v = vertex;
+                while (v.PreviousVertex != null && v != start)
                 {
-                    way.Add(way.Last().PreviousVertex);
+                    way.Add(v.PreviousVertex);
+                    v = v.PreviousVertex;
                 }
 
-                way.Add(start);
                 ways.Add((way[0].Cost, way));
             }
 

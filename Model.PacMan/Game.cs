@@ -14,6 +14,8 @@ namespace Model.PacMan
         public event Action OnLevelCompleted;
         public event Action<int> OnPacmanDie;
         public event Action<int, int> OnCoinEaten;
+        public event Action<List<Vertex>> DrawThePath;
+
         public int LivesCount => livesCount;
         private int livesCount;
         private Pacman player;
@@ -28,19 +30,27 @@ namespace Model.PacMan
         public Vertex[] GhostCells => new Vertex[]
             {red.CurrentVertex, pink.CurrentVertex, blue.CurrentVertex, orange.CurrentVertex};
 
+        private IPacmanDecisionMaker pacmanAi;
 
         public Game(IMazeCreator mapGenerator)
         {
-            livesCount = 3;
+            livesCount = 8;
             FrameCounter = 1;
             mapGen = mapGenerator;
             var matrix = mapGen.GenerateMap(10, 10);
             map = new Graph(matrix,
                 new List<IPathFinder>() {new BfsPathFinder(), new DfsPathFinder(), new UnInformPathFinder()});
             map.OnCoinEaten += CoinEaten;
+
+            // TODO: Injecting ai
             inputDir = Direction.Left;
             CurrentScore = 0;
             SpawnActors();
+        }
+
+        private void DrawPath(List<Vertex> obj)
+        {
+            DrawThePath?.Invoke(obj);
         }
 
         public void RestartLevel()
@@ -62,11 +72,12 @@ namespace Model.PacMan
         public void SpawnActors()
         {
             player = new Pacman(map);
+            pacmanAi = new PacmanDecisionMaker(map, player, new AStarPathfinder());
 
-            red = new Blinky(map, map.Vertices[11, 8], new RandomDecisionMaker());
-            blue = new Twinky(map, map.Vertices[11, 9], new RandomDecisionMaker());
-            pink = new Pinky(map, map.Vertices[9, 9], new RandomDecisionMaker());
-            orange = new Clyde(map, map.Vertices[12, 9], new RandomDecisionMaker());
+            red = new Blinky(map, map.Vertices[11, 8], new RandomGhostDecisionMaker());
+            blue = new Twinky(map, map.Vertices[11, 9], new RandomGhostDecisionMaker());
+            pink = new Pinky(map, map.Vertices[9, 9], new RandomGhostDecisionMaker());
+            orange = new Clyde(map, map.Vertices[12, 9], new RandomGhostDecisionMaker());
         }
 
         private void CoinEaten(int xCor, int yCor)
@@ -129,7 +140,9 @@ namespace Model.PacMan
 
         private void MakeDecisions(Direction input)
         {
-            player.MakeDecision(input);
+            // player.SetInputDirection(input);
+            pacmanAi.SetPositions(GhostCells, PlayerCell);
+            pacmanAi.MakeDecision();
         }
 
 

@@ -11,6 +11,8 @@ namespace Model.PacMan
         public Game.Position Position { get; private set; }
         public Direction CurrentDirection { get; private set; }
         private Direction nextDirection;
+        private IPathFinder pathFinder;
+        private IGhostDecisionMaker ghostDecisionMaker;
 
         public Pacman(Graph map)
         {
@@ -46,6 +48,8 @@ namespace Model.PacMan
 
         public void UpdatePosition()
         {
+            UpdateCurrentVertex();
+
             switch (CurrentDirection)
             {
                 case Direction.Left:
@@ -118,7 +122,7 @@ namespace Model.PacMan
             }
         }
 
-        public void MakeDecision(Direction inputDir)
+        public void SetInputDirection(Direction inputDir)
         {
             nextDirection = inputDir;
         }
