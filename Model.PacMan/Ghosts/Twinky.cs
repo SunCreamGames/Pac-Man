@@ -6,11 +6,10 @@ namespace Model.PacMan
     {
         private readonly Graph map;
 
-        public Twinky(Graph map, Vertex vert) : base(map , vert)
+        public Twinky(Graph map, Vertex vert, IGhostDecisionMaker ghostDecisionMaker) : base(map , vert, ghostDecisionMaker)
         {
             CurrentDirection = Direction.Up;
             this.map = map;
-            r = new Random(4);
         }
     }
 }

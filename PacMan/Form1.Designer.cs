@@ -65,7 +65,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Maroon;
-            this.ClientSize = new System.Drawing.Size(1100, 1100);
+            this.ClientSize = new System.Drawing.Size(1069, 1053);
             this.Controls.Add(this.pfLabel);
             this.Controls.Add(this.label1);
             this.Name = "Form1";

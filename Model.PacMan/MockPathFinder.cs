@@ -5,7 +5,7 @@ namespace Model.PacMan
 
     public class MockPathFinder : IPathFinder
     {
-        public void SetPoints(Vertex start, Vertex[] end)
+        public void SetPoints(Vertex start, Vertex[] end, Graph g)
         {
             throw new System.NotImplementedException();
         }

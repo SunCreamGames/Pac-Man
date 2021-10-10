@@ -7,11 +7,10 @@ namespace Model.PacMan
     {
         private readonly Graph map;
 
-        public Blinky(Graph map, Vertex vert) : base(map, vert)
+        public Blinky(Graph map, Vertex vert, IGhostDecisionMaker ghostDecisionMaker) : base(map, vert, ghostDecisionMaker)
         {
             this.map = map;
             CurrentDirection = Direction.Up;
-            r = new Random(0);
         }
     }
 }

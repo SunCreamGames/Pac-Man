@@ -11,6 +11,7 @@ namespace Model.PacMan
         public Vertex RVertex { get; private set; }
         public Vertex DVertex { get; private set; }
 
+        public Vertex[] Neighbours => new[] {LVertex, UVertex, RVertex, DVertex};
         public event Action<int, int> OnCoinEaten;
         public Walkablitity IsWalkable { get; private set; }
         public bool HasCoin { get; private set; }

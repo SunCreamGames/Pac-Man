@@ -5,14 +5,15 @@ namespace Model.PacMan
     using System.Linq;
     using System.Threading.Tasks;
 
-    public class BfsPathFinder : IPathFinder
+    public class DfsPathFinder : IPathFinder
     {
-        public readonly string Name = "BFS";
+        private const string Name = "DFS";
 
         private Vertex start;
         private Vertex[] end;
 
-        public void SetPoints(Vertex start, Vertex[] end)
+
+        public void SetPoints(Vertex start, Vertex[] end, Graph grid)
         {
             this.start = start;
             this.end = end;
@@ -26,10 +27,11 @@ namespace Model.PacMan
             }
 
             var visited = new List<Vertex>();
-            int distance = 0;
-            Vertex curVer = start;
-            var available = new Queue<Vertex>();
-            available.Enqueue(start);
+
+            var distance = 0;
+            var curVer = start;
+            var available = new Stack<Vertex>();
+            available.Push(start);
 
             var timer = System.Diagnostics.Stopwatch.StartNew();
             timer.Start();
@@ -51,23 +53,21 @@ namespace Model.PacMan
                             .Where(v => visited.Contains(v)).ToList().FirstOrDefault();
                         if (vertex.PreviousVertex == null)
                         {
+                            throw new Exception("No ways to visit ghost cell");
                         }
-                        else
-                        {
-                            visited.Add(vertex);
-                        }
-                    }
 
-                    continue;
+                        visited.Add(vertex);
+                    }
                 }
 
-                curVer = available.Dequeue();
-                var neighbours = new List<Vertex>() {curVer.DVertex, curVer.LVertex, curVer.RVertex, curVer.UVertex};
+                curVer = available.Pop();
+                var neighbours = new List<Vertex>() {curVer.RVertex, curVer.DVertex, curVer.LVertex, curVer.UVertex};
                 neighbours = neighbours
-                    .Where(v => v != null && v.IsWalkable != Walkablitity.Wall && !visited.Contains(v)).ToList();
+                    .Where(v => v != null && v.IsWalkable != Walkablitity.Wall && !visited.Contains(v) &&
+                                !available.Contains(v)).ToList();
                 foreach (var neighbour in neighbours)
                 {
-                    available.Enqueue(neighbour);
+                    available.Push(neighbour);
                     neighbour.PreviousVertex = curVer;
                 }
 
@@ -76,7 +76,9 @@ namespace Model.PacMan
 
             timer.Stop();
             var elapsedMs = timer.ElapsedTicks;
-
+            
+            visited = null;
+            GC.Collect();
             var result = new List<(int, List<Vertex>)>();
             foreach (var vertex in end)
             {
@@ -93,7 +95,7 @@ namespace Model.PacMan
                 distance = 0;
             }
 
-            visited = null;
+            available = null;
             GC.Collect();
             return (elapsedMs, result);
         }

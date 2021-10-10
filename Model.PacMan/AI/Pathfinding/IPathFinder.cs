@@ -6,7 +6,7 @@ namespace Model.PacMan
     public interface IPathFinder
     {
         
-        void SetPoints(Vertex start, Vertex[] end);
+        void SetPoints(Vertex start, Vertex[] end, Graph grid);
         Task<(long, List<(int, List<Vertex>)>)> FindPath();
         string GetName();
     }

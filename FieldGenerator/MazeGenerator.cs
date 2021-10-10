@@ -10,20 +10,20 @@
 
     public class MazeGenerator : IMazeCreator
     {
-        int[,] IMazeCreator.GenerateMap(int width = 30, int height = 30)
+        int[,] IMazeCreator.GenerateMap(int width = 5, int height = 9)
         {
             int[,] map;
 
-            // do
-            // {
-                map = new int[18, 10];
+            do
+            {
+                map = new int[9, 5];
                 map[3, 0] = map[3, 1] = map[4, 0] = map[4, 1] = 1;
                 map = FillWithTetramino(map);
                 map = MakeRoads(map);
 
                 map = MakeFullMap(map);
                 map = AddFinalWall(CreateTiledMap(map));
-            // } while (IsFullConnected(map));
+            } while (IsFullConnected(map));
 
             return map;
         }

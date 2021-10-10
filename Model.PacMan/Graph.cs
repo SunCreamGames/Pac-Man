@@ -112,6 +112,38 @@ namespace Model.PacMan
             }
         }
 
+        public double GetHeuristicCost(Vertex start, Vertex target)
+        {
+            return GetEuclideanDistanceBetwwenVetices(start, target);
+        }
+
+        private double GetEuclideanDistanceBetwwenVetices(Vertex start, Vertex target)
+        {
+            return Math.Sqrt(Math.Pow(target.Coordinate.Item1 - start.Coordinate.Item1, 2) +
+                             Math.Pow(target.Coordinate.Item2 - start.Coordinate.Item2, 2));
+        }
+
+        public Vertex GetRandomCoinVertex()
+        {
+            var r = new Random();
+            var coinVertices = walkableVertices.Where(v => v.HasCoin).ToArray();
+            return coinVertices[r.Next(coinVertices.Length)];
+        }
+
+        public double GetHeuristicCost(Vertex start, Vertex[] targets)
+        {
+            var cost = double.MaxValue;
+
+            foreach (var target in targets)
+            {
+                var newCost = Math.Sqrt(Math.Pow(target.Coordinate.Item1 - start.Coordinate.Item1, 2) +
+                                        Math.Pow(target.Coordinate.Item2 - start.Coordinate.Item2, 2));
+                cost = Math.Min(newCost, cost);
+            }
+
+            return cost;
+        }
+
         public Vertex GetRandomWalkableVertex()
         {
             var r = new Random();
@@ -126,7 +158,7 @@ namespace Model.PacMan
 
         public async Task<(long, List<(int, List<Vertex>)>)> FindPath(Vertex playerCell, Vertex[] ghostCells)
         {
-            currentPathFinder.SetPoints(playerCell, ghostCells);
+            currentPathFinder.SetPoints(playerCell, ghostCells, this);
             return await currentPathFinder.FindPath();
         }
     }

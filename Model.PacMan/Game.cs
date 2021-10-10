@@ -35,8 +35,8 @@ namespace Model.PacMan
             FrameCounter = 1;
             mapGen = mapGenerator;
             var matrix = mapGen.GenerateMap(10, 10);
-            map = new Graph(matrix, 
-                new List<IPathFinder>() { new BfsPathFinder(), new DfsPathFinder(),new UnInformPathFinder()});
+            map = new Graph(matrix,
+                new List<IPathFinder>() {new BfsPathFinder(), new DfsPathFinder(), new UnInformPathFinder()});
             map.OnCoinEaten += CoinEaten;
             inputDir = Direction.Left;
             CurrentScore = 0;
@@ -63,10 +63,10 @@ namespace Model.PacMan
         {
             player = new Pacman(map);
 
-            red = new Blinky(map, map.Vertices[11, 8]);
-            blue = new Twinky(map, map.Vertices[11, 9]);
-            pink = new Pinky(map, map.Vertices[9, 9]);
-            orange = new Clyde(map, map.Vertices[12, 9]);
+            red = new Blinky(map, map.Vertices[11, 8], new RandomDecisionMaker());
+            blue = new Twinky(map, map.Vertices[11, 9], new RandomDecisionMaker());
+            pink = new Pinky(map, map.Vertices[9, 9], new RandomDecisionMaker());
+            orange = new Clyde(map, map.Vertices[12, 9], new RandomDecisionMaker());
         }
 
         private void CoinEaten(int xCor, int yCor)
@@ -138,6 +138,5 @@ namespace Model.PacMan
             public int X { get; set; }
             public int Y { get; set; }
         }
-
     }
 }

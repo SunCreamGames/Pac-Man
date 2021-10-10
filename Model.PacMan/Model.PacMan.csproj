@@ -38,8 +38,16 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="BfsPathFinder.cs" />
-        <Compile Include="DfsPathFinder.cs" />
+        <Compile Include="AI\ChaseGhostDecisionMaker.cs" />
+        <Compile Include="AI\IDecisionMaker.cs" />
+        <Compile Include="AI\IGhostDecisionMaker.cs" />
+        <Compile Include="AI\PacmanDecisionMaker.cs" />
+        <Compile Include="AI\Pathfinding\AStarPathfinder.cs" />
+        <Compile Include="AI\Pathfinding\BfsPathFinder.cs" />
+        <Compile Include="AI\Pathfinding\DfsPathFinder.cs" />
+        <Compile Include="AI\Pathfinding\IPathFinder.cs" />
+        <Compile Include="AI\Pathfinding\UnInformPathFinder.cs" />
+        <Compile Include="AI\RandomGhostDecisionMaker.cs" />
         <Compile Include="Game.cs" />
         <Compile Include="Ghosts\Blinky.cs" />
         <Compile Include="Ghosts\Clyde.cs" />
@@ -48,16 +56,11 @@
         <Compile Include="Ghosts\Twinky.cs" />
         <Compile Include="Graph.cs" />
         <Compile Include="IMazeCreator.cs" />
-        <Compile Include="IPathFinder.cs" />
         <Compile Include="MockMazeCreator.cs" />
         <Compile Include="MockPathFinder.cs" />
         <Compile Include="Pacman.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="UnInformPathFinder.cs" />
         <Compile Include="Vertex.cs" />
-    </ItemGroup>
-    <ItemGroup>
-     
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

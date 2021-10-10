@@ -522,10 +522,10 @@ namespace Pac_Man
             {
                 game.UpdateFrame(direction);
 
-                if (game.FrameCounter == 0)
-                {
-                    CalculatePaths();
-                }
+                // if (game.FrameCounter == 0)
+                // {
+                //     CalculatePaths();
+                // }
             }
         }
 
