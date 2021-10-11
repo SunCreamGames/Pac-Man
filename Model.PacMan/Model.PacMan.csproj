@@ -41,6 +41,7 @@
         <Compile Include="AI\Ghosts\ChaseGhostDecisionMaker.cs" />
         <Compile Include="AI\Ghosts\IGhostDecisionMaker.cs" />
         <Compile Include="AI\Ghosts\RandomGhostDecisionMaker.cs" />
+        <Compile Include="AI\Ghosts\WanderGhostDecisionMaker.cs" />
         <Compile Include="AI\IDecisionMaker.cs" />
         <Compile Include="AI\Pacman\IPacmanDecisionMaker.cs" />
         <Compile Include="AI\Pacman\PacmanDecisionMaker.cs" />

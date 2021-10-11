@@ -5,12 +5,13 @@ namespace Model.PacMan
 
     public class Blinky : Ghost
     {
-        private readonly Graph map;
-
-        public Blinky(Graph map, Vertex vert, IGhostDecisionMaker ghostDecisionMaker) : base(map, vert, ghostDecisionMaker)
+        public Blinky(Graph map, Vertex vert, IGhostDecisionMaker ghostDecisionMaker, Pacman pacman) : base(map, vert,
+            ghostDecisionMaker, pacman)
         {
-            this.map = map;
+            close = 10;
+            far = 40;
             CurrentDirection = Direction.Up;
+            rand = new Random(3);
         }
     }
 }

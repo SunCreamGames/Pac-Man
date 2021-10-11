@@ -4,12 +4,13 @@ namespace Model.PacMan
 
     public class Twinky : Ghost
     {
-        private readonly Graph map;
-
-        public Twinky(Graph map, Vertex vert, IGhostDecisionMaker ghostDecisionMaker) : base(map , vert, ghostDecisionMaker)
+        public Twinky(Graph map, Vertex vert, IGhostDecisionMaker ghostDecisionMaker, Pacman pacman) : base(map, vert,
+            ghostDecisionMaker, pacman)
         {
+            close = 10;
+            far = 15;
             CurrentDirection = Direction.Up;
-            this.map = map;
+            rand = new Random(9);
         }
     }
 }

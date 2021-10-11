@@ -36,8 +36,7 @@ namespace Model.PacMan
             var timer = System.Diagnostics.Stopwatch.StartNew();
             timer.Start();
 
-            while (!(visited.Contains(end[0]) && visited.Contains(end[1]) && visited.Contains(end[2]) &&
-                     visited.Contains(end[3])))
+            while (!end.All(visited.Contains))
             {
                 if (available.Count == 0)
                 {

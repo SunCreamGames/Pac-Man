@@ -44,7 +44,7 @@ namespace Model.PacMan
             availableList.Add(start);
 
             timer.Start();
-            while (end.All(v => !visitedList.Contains(v)))
+            while (!end.All(visitedList.Contains))
             {
                 curVer = availableList.OrderBy(v => v.Cost + grid.GetHeuristicCost(v, end)).First();
                 foreach (var nVertex in curVer.Neighbours.Where(v =>

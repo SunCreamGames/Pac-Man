@@ -5,9 +5,15 @@ namespace Model.PacMan
 
     public class ChaseGhostDecisionMaker : IGhostDecisionMaker
     {
-        public List<Vertex> MakeDecision(Graph map, Vertex currentVertex, Vertex targetVertex)
+        public List<Vertex> MakeDecision(Graph map, Vertex _position, Vertex targetVertex, Random random)
         {
-            throw new NotImplementedException();
+            var path = map.FindPath(_position, new[] {targetVertex}).Result.Item2[0].Item2;
+            return path;
+        }
+
+        public int GetDistanceToPacman(Graph map, Vertex ghost, Vertex pacman)
+        {
+            return map.FindPath(ghost, new[] {pacman}).Result.Item2[0].Item1;
         }
     }
 }

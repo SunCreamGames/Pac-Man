@@ -9,13 +9,18 @@ namespace Model.PacMan
     {
         public Graph map;
         public int FrameCounter { get; private set; }
-        private IMazeCreator mapGen;
+        public int CurrentScore { get; private set; }
+
+        public Vertex[] GhostCells => new Vertex[]
+            {red.CurrentVertex, pink.CurrentVertex, blue.CurrentVertex, orange.CurrentVertex};
+
+        public Vertex PlayerCell => player.currentVertex;
+
         public event Action<Graph, Pacman, Ghost, Ghost, Ghost, Ghost, int> DrawCall;
         public event Action OnLevelCompleted;
         public event Action<int> OnPacmanDie;
         public event Action<int, int> OnCoinEaten;
         public event Action<List<Vertex>> DrawThePath;
-
         public int LivesCount => livesCount;
         private int livesCount;
         private Pacman player;
@@ -24,11 +29,8 @@ namespace Model.PacMan
         private Pinky pink;
         private Clyde orange;
         private Direction inputDir;
-        public int CurrentScore { get; private set; }
-        public Vertex PlayerCell => player.currentVertex;
+        private IMazeCreator mapGen;
 
-        public Vertex[] GhostCells => new Vertex[]
-            {red.CurrentVertex, pink.CurrentVertex, blue.CurrentVertex, orange.CurrentVertex};
 
         private IPacmanDecisionMaker pacmanAi;
 
@@ -41,11 +43,11 @@ namespace Model.PacMan
             map = new Graph(matrix,
                 new List<IPathFinder>() {new BfsPathFinder(), new DfsPathFinder(), new UnInformPathFinder()});
             map.OnCoinEaten += CoinEaten;
+            SpawnActors();
 
             // TODO: Injecting ai
             inputDir = Direction.Left;
             CurrentScore = 0;
-            SpawnActors();
         }
 
         private void DrawPath(List<Vertex> obj)
@@ -74,10 +76,10 @@ namespace Model.PacMan
             player = new Pacman(map);
             pacmanAi = new PacmanDecisionMaker(map, player, new AStarPathfinder());
 
-            red = new Blinky(map, map.Vertices[11, 8], new RandomGhostDecisionMaker());
-            blue = new Twinky(map, map.Vertices[11, 9], new RandomGhostDecisionMaker());
-            pink = new Pinky(map, map.Vertices[9, 9], new RandomGhostDecisionMaker());
-            orange = new Clyde(map, map.Vertices[12, 9], new RandomGhostDecisionMaker());
+            red = new Blinky(map, map.Vertices[11, 8], new ChaseGhostDecisionMaker(), player);
+            blue = new Twinky(map, map.Vertices[11, 9], new ChaseGhostDecisionMaker(), player);
+            pink = new Pinky(map, map.Vertices[9, 9], new ChaseGhostDecisionMaker(), player);
+            orange = new Clyde(map, map.Vertices[12, 9], new WanderGhostDecisionMaker(), player);
         }
 
         private void CoinEaten(int xCor, int yCor)

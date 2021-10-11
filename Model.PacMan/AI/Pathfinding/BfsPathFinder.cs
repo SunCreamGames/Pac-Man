@@ -34,8 +34,7 @@ namespace Model.PacMan
             var timer = System.Diagnostics.Stopwatch.StartNew();
             timer.Start();
 
-            while (!(visited.Contains(end[0]) && visited.Contains(end[1]) && visited.Contains(end[2]) &&
-                     visited.Contains(end[3])))
+            while (!end.All(visited.Contains))
             {
                 if (available.Count == 0)
                 {
@@ -82,9 +81,12 @@ namespace Model.PacMan
             {
                 var way = new List<Vertex>();
                 curVer = vertex;
+                way.Add(curVer);
                 while (curVer != start)
                 {
-                    way.Add(curVer);
+                    if (curVer.PreviousVertex == null) break;
+
+                    way.Add(curVer.PreviousVertex);
                     curVer = curVer.PreviousVertex;
                     distance++;
                 }

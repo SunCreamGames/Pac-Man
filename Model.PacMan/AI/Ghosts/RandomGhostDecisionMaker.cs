@@ -7,25 +7,19 @@ namespace Model.PacMan
     public class RandomGhostDecisionMaker : IGhostDecisionMaker
     {
         private Direction currentDirection;
+        private Vertex _position;
 
-        public void UpdateCurrentDirection(Direction d)
+        public List<Vertex> MakeDecision(Graph map, Vertex position, Vertex target, Random r)
         {
-            currentDirection = d;
-        }
-
-        public List<Vertex> MakeDecision(Graph map, Vertex currentVertex, Vertex target)
-        {
+            _position = position;
             Vertex nextVertex = null;
-            List<Vertex> possibleMoves = new List<Vertex>()
-                {currentVertex.DVertex, currentVertex.RVertex, currentVertex.UVertex, currentVertex.LVertex};
-            var r = new Random();
-            var startPossibleMoves = new List<Vertex>()
-                {currentVertex.DVertex, currentVertex.RVertex, currentVertex.UVertex, currentVertex.LVertex};
+            List<Vertex> possibleMoves;
+            var startPossibleMoves = _position.Neighbours.ToList();
             switch (currentDirection)
             {
                 case Direction.Left:
-                    nextVertex = currentVertex.LVertex;
-                    if (currentVertex.LVertex.IsWalkable == Walkablitity.Wall)
+                    nextVertex = _position.LVertex;
+                    if (nextVertex.IsWalkable == Walkablitity.Wall)
                     {
                         possibleMoves = startPossibleMoves.Where(v => v.IsWalkable == Walkablitity.Walkable).ToList();
                         if (possibleMoves.Count == 0)
@@ -33,8 +27,8 @@ namespace Model.PacMan
                             possibleMoves = startPossibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
                         }
 
-                        var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
-                        return new List<Vertex>() {currentVertex, nextDir};
+                        nextVertex = possibleMoves[r.Next(possibleMoves.Count)];
+                        return new List<Vertex>() {_position, nextVertex};
                     }
                     else
                     {
@@ -46,16 +40,16 @@ namespace Model.PacMan
 
                         if (possibleMoves.Count <= 2)
                         {
-                            break;
+                            return new List<Vertex>() {_position, nextVertex};
                         }
 
-                        var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
-                        return new List<Vertex>() {currentVertex, nextDir};
+                        nextVertex = possibleMoves[r.Next(possibleMoves.Count)];
+                        return new List<Vertex>() {_position, nextVertex};
                     }
 
                 case Direction.Right:
-                    nextVertex = currentVertex.RVertex;
-                    if (currentVertex.RVertex.IsWalkable == Walkablitity.Wall)
+                    nextVertex = _position.RVertex;
+                    if (nextVertex.IsWalkable == Walkablitity.Wall)
                     {
                         possibleMoves = startPossibleMoves.Where(v => v.IsWalkable == Walkablitity.Walkable).ToList();
                         if (possibleMoves.Count == 0)
@@ -63,12 +57,9 @@ namespace Model.PacMan
                             possibleMoves = startPossibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
                         }
 
-                        if (possibleMoves.Count == 0)
-                        {
-                        }
 
-                        var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
-                        return new List<Vertex>() {currentVertex, nextDir};
+                        nextVertex = possibleMoves[r.Next(possibleMoves.Count)];
+                        return new List<Vertex>() {_position, nextVertex};
                     }
                     else
                     {
@@ -80,18 +71,18 @@ namespace Model.PacMan
 
                         if (possibleMoves.Count <= 2)
                         {
-                            break;
+                            return new List<Vertex>() {_position, nextVertex};
                         }
 
-                        var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
+                        nextVertex = possibleMoves[r.Next(possibleMoves.Count)];
 
-                        return new List<Vertex>() {currentVertex, nextDir};
+                        return new List<Vertex>() {_position, nextVertex};
                     }
 
 
                 case Direction.Up:
-                    nextVertex = currentVertex.UVertex;
-                    if (currentVertex.UVertex.IsWalkable == Walkablitity.Wall)
+                    nextVertex = _position.UVertex;
+                    if (nextVertex.IsWalkable == Walkablitity.Wall)
                     {
                         possibleMoves = startPossibleMoves.Where(v => v.IsWalkable == Walkablitity.Walkable).ToList();
                         if (possibleMoves.Count == 0)
@@ -99,8 +90,8 @@ namespace Model.PacMan
                             possibleMoves = startPossibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
                         }
 
-                        var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
-                        return new List<Vertex>() {currentVertex, nextDir};
+                        nextVertex = possibleMoves[r.Next(possibleMoves.Count)];
+                        return new List<Vertex>() {_position, nextVertex};
                     }
                     else
                     {
@@ -112,16 +103,16 @@ namespace Model.PacMan
 
                         if (possibleMoves.Count <= 2)
                         {
-                            break;
+                            return new List<Vertex>() {_position, nextVertex};
                         }
 
-                        var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
-                        return new List<Vertex>() {currentVertex, nextDir};
+                        nextVertex = possibleMoves[r.Next(possibleMoves.Count)];
+                        return new List<Vertex>() {_position, nextVertex};
                     }
 
                 case Direction.Down:
-                    nextVertex = currentVertex.DVertex;
-                    if (currentVertex.DVertex.IsWalkable == Walkablitity.Wall)
+                    nextVertex = _position.DVertex;
+                    if (nextVertex.IsWalkable == Walkablitity.Wall)
                     {
                         possibleMoves = startPossibleMoves.Where(v => v.IsWalkable == Walkablitity.Walkable).ToList();
                         if (possibleMoves.Count == 0)
@@ -129,8 +120,8 @@ namespace Model.PacMan
                             possibleMoves = startPossibleMoves.Where(v => v.IsWalkable != Walkablitity.Wall).ToList();
                         }
 
-                        var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
-                        return new List<Vertex>() {currentVertex, nextDir};
+                        nextVertex = possibleMoves[r.Next(possibleMoves.Count)];
+                        return new List<Vertex>() {_position, nextVertex};
                     }
                     else
                     {
@@ -142,15 +133,21 @@ namespace Model.PacMan
 
                         if (possibleMoves.Count <= 2)
                         {
-                            break;
+                            return new List<Vertex>() {_position, nextVertex};
                         }
 
                         var nextDir = possibleMoves[r.Next(possibleMoves.Count)];
-                        return new List<Vertex>() {currentVertex, nextDir};
+                        return new List<Vertex>() {_position, nextDir};
                     }
             }
 
-             return new List<Vertex>() {currentVertex, nextVertex};
+            return new List<Vertex>() {_position, nextVertex};
+        }
+
+
+        public int GetDistanceToPacman(Graph map, Vertex ghost, Vertex pacman)
+        {
+            return map.FindPath(ghost, new[] {pacman}).Result.Item2[0].Item1;
         }
     }
 }

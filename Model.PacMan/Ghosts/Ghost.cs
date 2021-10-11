@@ -8,25 +8,39 @@ namespace Model.PacMan
 
     public class Ghost
     {
-        private Graph map;
+        protected readonly Graph map;
+        protected int close, far;
         private IGhostDecisionMaker ghostDecisionMaker;
         public Vertex CurrentVertex { get; private set; }
         public Direction CurrentDirection { get; protected set; }
         public Game.Position Position { get; private set; }
+        protected Random rand;
+        private Pacman pacman;
+        public Vertex PacmanPosition => pacman.currentVertex;
 
-        public Ghost(Graph map, Vertex startPoint, IGhostDecisionMaker ghostDecisionMaker)
+        public Ghost(Graph map, Vertex startPoint, IGhostDecisionMaker ghostDecisionMaker, Pacman pacman)
         {
             this.map = map;
+            close = 10;
+            far = 25;
             CurrentVertex = startPoint;
             this.ghostDecisionMaker = ghostDecisionMaker;
-
-            Position = new Game.Position()
+            this.pacman = pacman;
+            rand = new Random();
+            SetCurrentVertex(startPoint);
+            var wayToPacMan = ghostDecisionMaker.GetDistanceToPacman(map, CurrentVertex, PacmanPosition);
+            if (wayToPacMan < far && wayToPacMan > close)
             {
-                X = 8 + CurrentVertex.Coordinate.Item1 * 16,
-                Y = 8 + CurrentVertex.Coordinate.Item2 * 16
-            };
-            CurrentDirection = Direction.Up;
-            CurrentDirection = GetDirectionToTheVertex(ghostDecisionMaker.MakeDecision(map, CurrentVertex, null));
+                CurrentDirection =
+                    GetDirectionToTheVertex(ghostDecisionMaker.MakeDecision(map, CurrentVertex, PacmanPosition, rand));
+                Position = new Game.Position()
+                {
+                    X = 8 + CurrentVertex.Coordinate.Item1 * 16,
+                    Y = 8 + CurrentVertex.Coordinate.Item2 * 16
+                };
+                CurrentDirection =
+                    GetDirectionToTheVertex(ghostDecisionMaker.MakeDecision(map, CurrentVertex, PacmanPosition, rand));
+            }
         }
 
         private Direction GetDirectionToTheVertex(List<Vertex> targetPath)
@@ -38,34 +52,36 @@ namespace Model.PacMan
 
             var indexOfCurrentVertex = targetPath.IndexOf(CurrentVertex);
 
-            if (targetPath.Last() == CurrentVertex)
+            if (targetPath.First() == CurrentVertex)
             {
-                targetPath = ghostDecisionMaker.MakeDecision(map, CurrentVertex, null);
-                return GetDirectionToTheVertex(targetPath);
+                return CurrentDirection;
             }
 
-            if (targetPath[indexOfCurrentVertex + 1] == CurrentVertex.LVertex)
+
+            if (targetPath[indexOfCurrentVertex - 1] == CurrentVertex.LVertex)
             {
                 return Direction.Left;
             }
 
-            if (targetPath[indexOfCurrentVertex + 1] == CurrentVertex.RVertex)
+            if (targetPath[indexOfCurrentVertex - 1] == CurrentVertex.RVertex)
             {
                 return Direction.Right;
             }
 
-            if (targetPath[indexOfCurrentVertex + 1] == CurrentVertex.UVertex)
+            if (targetPath[indexOfCurrentVertex - 1] == CurrentVertex.UVertex)
             {
                 return Direction.Up;
             }
 
-            if (targetPath[indexOfCurrentVertex + 1] == CurrentVertex.DVertex)
+            if (targetPath[indexOfCurrentVertex - 1] == CurrentVertex.DVertex)
             {
                 return Direction.Down;
             }
 
+
             throw new Exception("Default case exception");
         }
+
 
         public void SetCurrentVertex(Vertex v)
         {
@@ -76,7 +92,8 @@ namespace Model.PacMan
                 Y = 8 + CurrentVertex.Coordinate.Item2 * 16
             };
             CurrentDirection = Direction.Up;
-            CurrentDirection = GetDirectionToTheVertex(ghostDecisionMaker.MakeDecision(map, CurrentVertex, null));
+            CurrentDirection =
+                GetDirectionToTheVertex(ghostDecisionMaker.MakeDecision(map, CurrentVertex, PacmanPosition, rand));
         }
 
         public void UpdatePosition()
@@ -116,7 +133,17 @@ namespace Model.PacMan
 
         private void TryMakeDecision()
         {
-            CurrentDirection = GetDirectionToTheVertex(ghostDecisionMaker.MakeDecision(map, CurrentVertex, null));
+            if (ghostDecisionMaker.GetDistanceToPacman(map, CurrentVertex, PacmanPosition) < close)
+            {
+                ghostDecisionMaker = new WanderGhostDecisionMaker();
+            }
+            else
+            {
+                ghostDecisionMaker = new ChaseGhostDecisionMaker();
+            }
+
+            CurrentDirection =
+                GetDirectionToTheVertex(ghostDecisionMaker.MakeDecision(map, CurrentVertex, PacmanPosition, rand));
         }
     }
 }
