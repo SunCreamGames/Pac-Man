@@ -92,9 +92,9 @@ namespace Model.PacMan
 
         private async Task<List<Vertex>> FindPath(Vertex target)
         {
-            _pathfinder.SetPoints(_position, new[] {target}, _grid);
+            _pathfinder.SetPoints(_grid, _position, target);
             var res = await _pathfinder.FindPath();
-            return res.Item2[0].Item2;
+            return res.Item2;
         }
     }
 }

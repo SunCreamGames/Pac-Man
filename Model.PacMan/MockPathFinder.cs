@@ -5,12 +5,12 @@ namespace Model.PacMan
 
     public class MockPathFinder : IPathFinder
     {
-        public void SetPoints(Vertex start, Vertex[] end, Graph g)
+        public void SetPoints(Graph grid, Vertex start, Vertex end)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<(long, List<(int, List<Vertex>)>)> FindPath()
+        Task<(int, List<Vertex>)> IPathFinder.FindPath()
         {
             throw new System.NotImplementedException();
         }

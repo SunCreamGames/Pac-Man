@@ -147,7 +147,7 @@ namespace Model.PacMan
 
         public int GetDistanceToPacman(Graph map, Vertex ghost, Vertex pacman)
         {
-            return map.FindPath(ghost, new[] {pacman}).Result.Item2[0].Item1;
+            return map.FindPath(ghost, pacman).Result.Item1;
         }
     }
 }

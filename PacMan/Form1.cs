@@ -177,13 +177,6 @@ namespace Pac_Man
             DrawGhosts(red, orange, pink, blue, frameNumber);
         }
 
-        private async void CalculatePaths()
-        {
-            (long, List<(int, List<Vertex>)>) answer;
-            answer = await game.map.FindPath(game.PlayerCell, game.GhostCells);
-            DrawWay(answer.Item2);
-            pfLabel.Text = $"{game.map.PathFindingAlgorithmName}:{answer.Item1}";
-        }
 
         private void DrawWay(List<(int, List<Vertex>)> stepsWay)
         {

@@ -23,7 +23,7 @@ namespace Model.PacMan
             if (path == null || path.FirstOrDefault() == null || path.FirstOrDefault() == _position)
             {
                 targetVertex = map.GetRandomWalkableVertex();
-                path = map.FindPath(_position, new[] {targetVertex}).Result.Item2[0].Item2;
+                path = map.FindPath(_position, targetVertex).Result.Item2;
             }
 
             return path;
@@ -31,10 +31,7 @@ namespace Model.PacMan
 
         public int GetDistanceToPacman(Graph map, Vertex ghost, Vertex pacman)
         {
-            return map.FindPath(ghost, new[]
-            {
-                pacman
-            }).Result.Item2[0].Item1;
+            return map.FindPath(ghost, pacman).Result.Item1;
         }
 
         private Direction GetDirectionToTheVertex(List<Vertex> targetPath)

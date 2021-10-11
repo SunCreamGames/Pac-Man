@@ -10,18 +10,18 @@ namespace Model.PacMan
         private const string Name = "DFS";
 
         private Vertex start;
-        private Vertex[] end;
+        private Vertex end;
 
 
-        public void SetPoints(Vertex start, Vertex[] end, Graph grid)
+        public void SetPoints(Graph grid, Vertex start, Vertex end)
         {
             this.start = start;
             this.end = end;
         }
 
-        public async Task<(long, List<(int, List<Vertex>)>)> FindPath()
+        public async Task<(int, List<Vertex>)> FindPath()
         {
-            if (start == null || end.Contains(null))
+            if (start == null || end == null)
             {
                 throw new Exception("Start or target cell is null");
             }
@@ -33,30 +33,25 @@ namespace Model.PacMan
             var available = new Stack<Vertex>();
             available.Push(start);
 
-            var timer = System.Diagnostics.Stopwatch.StartNew();
-            timer.Start();
 
-            while (!end.All(visited.Contains))
+            while (!visited.Contains(end))
             {
                 if (available.Count == 0)
                 {
-                    foreach (var vertex in end)
+                    if (visited.Contains(end))
                     {
-                        if (visited.Contains(vertex))
-                        {
-                            continue;
-                        }
-
-                        vertex.PreviousVertex = new List<Vertex>
-                                {vertex.DVertex, vertex.LVertex, vertex.RVertex, vertex.UVertex}
-                            .Where(v => visited.Contains(v)).ToList().FirstOrDefault();
-                        if (vertex.PreviousVertex == null)
-                        {
-                            throw new Exception("No ways to visit ghost cell");
-                        }
-
-                        visited.Add(vertex);
+                        continue;
                     }
+
+                    end.PreviousVertex = new List<Vertex>
+                            {end.DVertex, end.LVertex, end.RVertex, end.UVertex}
+                        .Where(v => visited.Contains(v)).ToList().FirstOrDefault();
+                    if (end.PreviousVertex == null)
+                    {
+                        throw new Exception("No ways to visit ghost cell");
+                    }
+
+                    visited.Add(end);
                 }
 
                 curVer = available.Pop();
@@ -73,30 +68,19 @@ namespace Model.PacMan
                 visited.Add(curVer);
             }
 
-            timer.Stop();
-            var elapsedMs = timer.ElapsedTicks;
-            
+
             visited = null;
             GC.Collect();
-            var result = new List<(int, List<Vertex>)>();
-            foreach (var vertex in end)
+            var way = new List<Vertex>();
+            curVer = end;
+            while (curVer != start)
             {
-                var way = new List<Vertex>();
-                curVer = vertex;
-                while (curVer != start)
-                {
-                    way.Add(curVer);
-                    curVer = curVer.PreviousVertex;
-                    distance++;
-                }
-
-                result.Add((distance, way));
-                distance = 0;
+                way.Add(curVer);
+                curVer = curVer.PreviousVertex;
+                distance++;
             }
 
-            available = null;
-            GC.Collect();
-            return (elapsedMs, result);
+            return (distance, way);
         }
 
         public string GetName()

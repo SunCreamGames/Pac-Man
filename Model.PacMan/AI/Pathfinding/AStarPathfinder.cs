@@ -10,11 +10,11 @@ namespace Model.PacMan
         private const string Name = "A*";
 
         private Vertex start;
-        private Vertex[] end;
+        private Vertex end;
         private Graph grid;
 
 
-        public void SetPoints(Vertex start, Vertex[] end, Graph grid)
+        public void SetPoints(Graph grid, Vertex start, Vertex end)
         {
             this.grid = grid;
             this.start = start;
@@ -22,14 +22,14 @@ namespace Model.PacMan
         }
 
 
-        public async Task<(long, List<(int, List<Vertex>)>)> FindPath()
+        public async Task<(int, List<Vertex>)> FindPath()
         {
-            if (start == null || end.Contains(null))
+            if (start == null || end == null)
             {
                 throw new Exception("Start or target cell is null");
             }
 
-
+            var distance = 0;
             var timer = System.Diagnostics.Stopwatch.StartNew();
 
             foreach (var vertex in grid.Vertices)
@@ -44,7 +44,7 @@ namespace Model.PacMan
             availableList.Add(start);
 
             timer.Start();
-            while (!end.All(visitedList.Contains))
+            while (!visitedList.Contains(end))
             {
                 curVer = availableList.OrderBy(v => v.Cost + grid.GetHeuristicCost(v, end)).First();
                 foreach (var nVertex in curVer.Neighbours.Where(v =>
@@ -69,22 +69,17 @@ namespace Model.PacMan
 
             timer.Stop();
 
-            var ways = new List<(int, List<Vertex>)>();
-            foreach (var vertex in end)
+            var way = new List<Vertex>();
+            way.Add(end);
+            var i = end;
+            while (i.PreviousVertex != null && i != start)
             {
-                var way = new List<Vertex>();
-                way.Add(vertex);
-                var v = vertex;
-                while (v.PreviousVertex != null && v != start)
-                {
-                    way.Add(v.PreviousVertex);
-                    v = v.PreviousVertex;
-                }
-
-                ways.Add((way[0].Cost, way));
+                way.Add(i.PreviousVertex);
+                i = i.PreviousVertex;
+                distance++;
             }
 
-            return (timer.ElapsedTicks, ways);
+            return (distance, way);
         }
 
         public string GetName()

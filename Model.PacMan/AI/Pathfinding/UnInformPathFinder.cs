@@ -10,108 +10,98 @@ namespace Model.PacMan
         private const string Name = "UIS";
 
         private Vertex start;
-        private Vertex[] end;
+        private Vertex end;
 
-        public void SetPoints(Vertex start, Vertex[] end, Graph grid)
+        public void SetPoints(Graph grid, Vertex start, Vertex end)
         {
             this.start = start;
             this.end = end;
         }
 
-        public async Task<(long, List<(int, List<Vertex>)>)> FindPath()
+        public async Task<(int, List<Vertex>)> FindPath()
         {
-            List<Vertex> available = new List<Vertex>() {start};
             List<Vertex> visited = new List<Vertex>();
+            List<Vertex> available = new List<Vertex>();
 
             var distance = 0;
             var curVer = start;
             start.Cost = 0;
-
+            available.Add(curVer);
 
             var timer = System.Diagnostics.Stopwatch.StartNew();
             timer.Start();
 
-            while (!end.All(visited.Contains))
+            while (!visited.Contains(end))
             {
                 if (available.Count == 0)
                 {
-                    foreach (var vertex in end)
+                    if (visited.Contains(end))
                     {
-                        if (visited.Contains(vertex))
-                        {
-                            continue;
-                        }
-
-                        vertex.PreviousVertex = new List<Vertex>
-                                {vertex.DVertex, vertex.LVertex, vertex.RVertex, vertex.UVertex}
-                            .Where(v => visited.Contains(v)).ToList().FirstOrDefault();
-                        if (vertex.PreviousVertex == null)
-                        {
-                            throw new Exception("No ways to visit ghost cell");
-                        }
-
-                        visited.Add(vertex);
+                        continue;
                     }
+
+                    end.PreviousVertex = end.Neighbours
+                        .Where(v => visited.Contains(v)).ToList().FirstOrDefault();
+                    if (end.PreviousVertex == null)
+                    {
+                        throw new Exception("No ways to visit ghost cell");
+                    }
+
+                    visited.Add(end);
                 }
+            }
 
-                timer.Stop();
-                curVer = available.Aggregate((curMin, v) => (curMin == null || (v.Cost <
-                    curMin.Cost))
-                    ? v
-                    : curMin);
+            timer.Stop();
+            curVer = available.Aggregate((curMin, v) => (curMin == null || (v.Cost <
+                                                                            curMin.Cost))
+                ? v
+                : curMin);
 
-                visited.Add(curVer);
-                available.Remove(curVer);
-                timer.Start();
+            visited.Add(curVer);
+            available.Remove(curVer);
+            timer.Start();
 
-                var neighbours = new List<Vertex>()
-                    {curVer.DVertex, curVer.LVertex, curVer.RVertex, curVer.UVertex};
-                neighbours = neighbours
-                    .Where(v => v != null && v.IsWalkable != Walkablitity.Wall && !visited.Contains(v) &&
-                                !available.Contains(v)).ToList();
-                foreach (var neighbour in neighbours)
+            var neighbours = new List<Vertex>()
+                {curVer.DVertex, curVer.LVertex, curVer.RVertex, curVer.UVertex};
+            neighbours = neighbours
+                .Where(v => v != null && v.IsWalkable != Walkablitity.Wall && !visited.Contains(v) &&
+                            !available.Contains(v)).ToList();
+            foreach (var neighbour in neighbours)
+            {
+                available.Add(neighbour);
+                neighbour.PreviousVertex = curVer;
+                if (neighbour.Cost < Int32.MaxValue)
                 {
-                    available.Add(neighbour);
-                    neighbour.PreviousVertex = curVer;
-                    if (neighbour.Cost < Int32.MaxValue)
-                    {
-                        if (neighbour.Cost > curVer.Cost + 1)
-                        {
-                            neighbour.Cost = curVer.Cost + 1;
-                            neighbour.PreviousVertex = curVer;
-                        }
-                    }
-                    else
+                    if (neighbour.Cost > curVer.Cost + 1)
                     {
                         neighbour.Cost = curVer.Cost + 1;
                         neighbour.PreviousVertex = curVer;
                     }
+                }
+                else
+                {
+                    neighbour.Cost = curVer.Cost + 1;
+                    neighbour.PreviousVertex = curVer;
                 }
             }
 
             timer.Stop();
             var elapsedMs = timer.ElapsedTicks;
 
-            var result = new List<(int, List<Vertex>)>();
-            foreach (var vertex in end)
+            var way = new List<Vertex>();
+            curVer = end;
+            way.Add(end);
+            while (curVer != start)
             {
-                var way = new List<Vertex>();
-                curVer = vertex;
-                while (curVer != start)
-                {
-                    way.Add(curVer);
-                    curVer = curVer.PreviousVertex;
-                    distance++;
-                }
-
-                result.Add((distance, way));
-                distance = 0;
+                way.Add(curVer.PreviousVertex);
+                curVer = curVer.PreviousVertex;
+                distance++;
             }
 
             available = null;
             visited = null;
             GC.Collect();
-            return (elapsedMs, result);
+            return (distance, way);
         }
 
         public string GetName()

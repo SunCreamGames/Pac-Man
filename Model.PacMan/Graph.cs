@@ -163,9 +163,9 @@ namespace Model.PacMan
             return vert;
         }
 
-        public async Task<(long, List<(int, List<Vertex>)>)> FindPath(Vertex playerCell, Vertex[] ghostCells)
+        public async Task<(int, List<Vertex>)> FindPath(Vertex start, Vertex target)
         {
-            currentPathFinder.SetPoints(playerCell, ghostCells, this);
+            currentPathFinder.SetPoints(this, start, target);
             return await currentPathFinder.FindPath();
         }
     }

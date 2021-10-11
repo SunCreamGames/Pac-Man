@@ -10,26 +10,26 @@ namespace TestsM
     public class Tests
     {
         [Fact]
-        public async  void Test1()
-        {
-            var dfsFPathfinder = new DfsPathFinder();
-            var matrix = ReadMatrix();
-            var a = new Graph(matrix, new List<IPathFinder>() {dfsFPathfinder});
-            dfsFPathfinder.SetPoints(a.Vertices[1, 1],
-                new Vertex[] {a.Vertices[1, 12], a.Vertices[7, 1], a.Vertices[7, 12], a.Vertices[7, 7]}, a);
-            var x = new List<List<Vertex>>();
-            var result = await dfsFPathfinder.FindPath();
-
-
-            WriteMatrix(a, result);
-            Assert.Equal(result.Item2[0].Item2,
-                new List<Vertex>()
-                {
-                    a.Vertices[1, 12], a.Vertices[1, 11], a.Vertices[1, 10], a.Vertices[1, 9], a.Vertices[1, 8],
-                    a.Vertices[1, 7], a.Vertices[1, 6], a.Vertices[1, 5], a.Vertices[1, 4], a.Vertices[1, 3],
-                    a.Vertices[1, 2]
-                });
-        }
+        // public async  void Test1()
+        // {
+        //     var dfsFPathfinder = new DfsPathFinder();
+        //     var matrix = ReadMatrix();
+        //     var a = new Graph(matrix, new List<IPathFinder>() {dfsFPathfinder});
+        //     dfsFPathfinder.SetPoints(a.Vertices[1, 1],
+        //         new Vertex[] {a.Vertices[1, 12], a.Vertices[7, 1], a.Vertices[7, 12], a.Vertices[7, 7]}, a);
+        //     var x = new List<List<Vertex>>();
+        //     var result = await dfsFPathfinder.FindPath();
+        //
+        //
+        //     WriteMatrix(a, result);
+        //     Assert.Equal(result.Item2[0].Item2,
+        //         new List<Vertex>()
+        //         {
+        //             a.Vertices[1, 12], a.Vertices[1, 11], a.Vertices[1, 10], a.Vertices[1, 9], a.Vertices[1, 8],
+        //             a.Vertices[1, 7], a.Vertices[1, 6], a.Vertices[1, 5], a.Vertices[1, 4], a.Vertices[1, 3],
+        //             a.Vertices[1, 2]
+        //         });
+        // }
 
         private void WriteMatrix(Graph g, ( long, List<(int, List<Vertex>)>) ways)
         {
