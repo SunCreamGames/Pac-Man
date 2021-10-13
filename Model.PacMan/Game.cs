@@ -36,7 +36,7 @@ namespace Model.PacMan
 
         public Game(IMazeCreator mapGenerator)
         {
-            livesCount = 8;
+            livesCount = 3;
             FrameCounter = 1;
             mapGen = mapGenerator;
             var matrix = mapGen.GenerateMap(10, 10);
@@ -79,7 +79,7 @@ namespace Model.PacMan
             red = new Blinky(map, map.Vertices[11, 8], new ChaseGhostDecisionMaker(), player);
             blue = new Twinky(map, map.Vertices[11, 9], new ChaseGhostDecisionMaker(), player);
             pink = new Pinky(map, map.Vertices[9, 9], new ChaseGhostDecisionMaker(), player);
-            orange = new Clyde(map, map.Vertices[12, 9], new WanderGhostDecisionMaker(), player);
+            orange = new Clyde(map, map.Vertices[12, 9], new ChaseGhostDecisionMaker(), player);
         }
 
         private void CoinEaten(int xCor, int yCor)

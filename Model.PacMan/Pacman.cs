@@ -12,7 +12,7 @@ namespace Model.PacMan
         public Direction CurrentDirection { get; private set; }
         private Direction nextDirection;
         private IPathFinder pathFinder;
-        private IGhostDecisionMaker ghostDecisionMaker;
+        private GhostDecisionMaker ghostDecisionMaker;
 
         public Pacman(Graph map)
         {

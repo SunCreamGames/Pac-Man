@@ -68,18 +68,22 @@ namespace Model.PacMan
                 visited.Add(curVer);
             }
 
-
-            visited = null;
-            GC.Collect();
             var way = new List<Vertex>();
             curVer = end;
+            way.Add(curVer);
+
             while (curVer != start)
             {
-                way.Add(curVer);
+                if (curVer.PreviousVertex == null) break;
+
+                way.Add(curVer.PreviousVertex);
                 curVer = curVer.PreviousVertex;
                 distance++;
             }
 
+
+            visited = null;
+            GC.Collect();
             return (distance, way);
         }
 

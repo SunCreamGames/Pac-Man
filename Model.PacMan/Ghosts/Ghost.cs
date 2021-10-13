@@ -2,6 +2,7 @@ namespace Model.PacMan
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Runtime.Remoting.Channels;
@@ -9,8 +10,7 @@ namespace Model.PacMan
     public class Ghost
     {
         protected readonly Graph map;
-        protected int close, far;
-        private IGhostDecisionMaker ghostDecisionMaker;
+        private GhostDecisionMaker ghostDecisionMaker;
         public Vertex CurrentVertex { get; private set; }
         public Direction CurrentDirection { get; protected set; }
         public Game.Position Position { get; private set; }
@@ -18,33 +18,33 @@ namespace Model.PacMan
         private Pacman pacman;
         public Vertex PacmanPosition => pacman.currentVertex;
 
-        public Ghost(Graph map, Vertex startPoint, IGhostDecisionMaker ghostDecisionMaker, Pacman pacman)
+        public Ghost(Graph map, Vertex startPoint, GhostDecisionMaker ghostDecisionMaker, Pacman pacman)
         {
             this.map = map;
-            close = 10;
-            far = 25;
             CurrentVertex = startPoint;
             this.ghostDecisionMaker = ghostDecisionMaker;
+            ghostDecisionMaker.OnSwitch += SwitchDecisionMaker;
             this.pacman = pacman;
             rand = new Random();
             SetCurrentVertex(startPoint);
-            var wayToPacMan = ghostDecisionMaker.GetDistanceToPacman(map, CurrentVertex, PacmanPosition);
-            if (wayToPacMan < far && wayToPacMan > close)
-            {
-                CurrentDirection =
-                    GetDirectionToTheVertex(ghostDecisionMaker.MakeDecision(map, CurrentVertex, PacmanPosition, rand));
-                Position = new Game.Position()
-                {
-                    X = 8 + CurrentVertex.Coordinate.Item1 * 16,
-                    Y = 8 + CurrentVertex.Coordinate.Item2 * 16
-                };
-                CurrentDirection =
-                    GetDirectionToTheVertex(ghostDecisionMaker.MakeDecision(map, CurrentVertex, PacmanPosition, rand));
-            }
+            CurrentDirection =
+                GetDirectionToTheVertex(ghostDecisionMaker.MakeDecision(map, CurrentVertex, PacmanPosition, rand));
+        }
+
+        private void SwitchDecisionMaker(IDecisionMaker newDecisionMaker)
+        {
+            ghostDecisionMaker.OnSwitch -= SwitchDecisionMaker;
+            ghostDecisionMaker = (GhostDecisionMaker) newDecisionMaker;
+            ghostDecisionMaker.OnSwitch += SwitchDecisionMaker;
         }
 
         private Direction GetDirectionToTheVertex(List<Vertex> targetPath)
         {
+            if (targetPath == null || targetPath.Count == 0)
+            {
+                return CurrentDirection;
+            }
+
             if (!targetPath.Contains(CurrentVertex))
             {
                 throw new Exception("Path doesn't contain curVer");
@@ -92,8 +92,6 @@ namespace Model.PacMan
                 Y = 8 + CurrentVertex.Coordinate.Item2 * 16
             };
             CurrentDirection = Direction.Up;
-            CurrentDirection =
-                GetDirectionToTheVertex(ghostDecisionMaker.MakeDecision(map, CurrentVertex, PacmanPosition, rand));
         }
 
         public void UpdatePosition()
@@ -133,15 +131,7 @@ namespace Model.PacMan
 
         private void TryMakeDecision()
         {
-            if (ghostDecisionMaker.GetDistanceToPacman(map, CurrentVertex, PacmanPosition) < close)
-            {
-                ghostDecisionMaker = new WanderGhostDecisionMaker();
-            }
-            else
-            {
-                ghostDecisionMaker = new ChaseGhostDecisionMaker();
-            }
-
+            ghostDecisionMaker.SwitchingDecision(map, CurrentVertex, PacmanPosition);
             CurrentDirection =
                 GetDirectionToTheVertex(ghostDecisionMaker.MakeDecision(map, CurrentVertex, PacmanPosition, rand));
         }

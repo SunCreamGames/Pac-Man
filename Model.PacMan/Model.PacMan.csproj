@@ -39,7 +39,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="AI\Ghosts\ChaseGhostDecisionMaker.cs" />
-        <Compile Include="AI\Ghosts\IGhostDecisionMaker.cs" />
+        <Compile Include="AI\Ghosts\GhostDecisionMaker.cs" />
         <Compile Include="AI\Ghosts\RandomGhostDecisionMaker.cs" />
         <Compile Include="AI\Ghosts\WanderGhostDecisionMaker.cs" />
         <Compile Include="AI\IDecisionMaker.cs" />

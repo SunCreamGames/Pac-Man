@@ -3,17 +3,24 @@ namespace Model.PacMan
     using System;
     using System.Collections.Generic;
 
-    public class ChaseGhostDecisionMaker : IGhostDecisionMaker
+    public class ChaseGhostDecisionMaker : GhostDecisionMaker
     {
-        public List<Vertex> MakeDecision(Graph map, Vertex _position, Vertex targetVertex, Random random)
+        public override event Action<IDecisionMaker> OnSwitch;
+
+        protected int closeDist = 5;
+
+        public override List<Vertex> MakeDecision(Graph map, Vertex _position, Vertex targetVertex, Random random)
         {
-            var path = map.FindPath(_position, targetVertex).Result.Item2;
-            return path;
+            return map.FindPath(_position, targetVertex).Result.Item2;
         }
 
-        public int GetDistanceToPacman(Graph map, Vertex ghost, Vertex pacman)
+        public override void SwitchingDecision(Graph map, Vertex ghost, Vertex pacman)
         {
-            return map.FindPath(ghost, pacman).Result.Item1;
+            var pathToPacman = map.FindPath(ghost, pacman).Result.Item1;
+            if (pathToPacman < closeDist)
+            {
+                OnSwitch?.Invoke(new WanderGhostDecisionMaker());
+            }
         }
     }
 }

@@ -7,6 +7,8 @@ namespace Model.PacMan
 
     public class PacmanDecisionMaker : IPacmanDecisionMaker
     {
+        public event Action<IDecisionMaker> OnSwitch;
+
         private Vertex[] _ghosts;
         private Vertex _position;
         private readonly Graph _grid;

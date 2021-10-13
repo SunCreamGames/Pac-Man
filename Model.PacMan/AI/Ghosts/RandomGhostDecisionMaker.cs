@@ -4,12 +4,14 @@ namespace Model.PacMan
     using System.Collections.Generic;
     using System.Linq;
 
-    public class RandomGhostDecisionMaker : IGhostDecisionMaker
+    public class RandomGhostDecisionMaker : GhostDecisionMaker
     {
+        public override event Action<IDecisionMaker> OnSwitch;
+
         private Direction currentDirection;
         private Vertex _position;
 
-        public List<Vertex> MakeDecision(Graph map, Vertex position, Vertex target, Random r)
+        public override List<Vertex> MakeDecision(Graph map, Vertex position, Vertex target, Random r)
         {
             _position = position;
             Vertex nextVertex = null;
@@ -145,9 +147,8 @@ namespace Model.PacMan
         }
 
 
-        public int GetDistanceToPacman(Graph map, Vertex ghost, Vertex pacman)
+        public override void SwitchingDecision(Graph map, Vertex ghost, Vertex pacman)
         {
-            return map.FindPath(ghost, pacman).Result.Item1;
         }
     }
 }

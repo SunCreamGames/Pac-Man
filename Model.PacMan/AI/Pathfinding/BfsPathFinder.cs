@@ -69,7 +69,6 @@ namespace Model.PacMan
             timer.Stop();
             var elapsedMs = timer.ElapsedTicks;
 
-            var result = new List<(int, List<Vertex>)>();
             var way = new List<Vertex>();
             curVer = end;
             way.Add(curVer);

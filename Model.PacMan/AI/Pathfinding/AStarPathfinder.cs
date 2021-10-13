@@ -26,7 +26,8 @@ namespace Model.PacMan
         {
             if (start == null || end == null)
             {
-                throw new Exception("Start or target cell is null");
+                // throw new Exception("Start or target cell is null");
+                return await FindPath();
             }
 
             var distance = 0;
@@ -70,15 +71,21 @@ namespace Model.PacMan
             timer.Stop();
 
             var way = new List<Vertex>();
-            way.Add(end);
-            var i = end;
-            while (i.PreviousVertex != null && i != start)
+            curVer = end;
+            way.Add(curVer);
+
+            while (curVer != start)
             {
-                way.Add(i.PreviousVertex);
-                i = i.PreviousVertex;
+                if (curVer.PreviousVertex == null) break;
+
+                way.Add(curVer.PreviousVertex);
+                curVer = curVer.PreviousVertex;
                 distance++;
             }
 
+
+            visitedList = null;
+            GC.Collect();
             return (distance, way);
         }
 

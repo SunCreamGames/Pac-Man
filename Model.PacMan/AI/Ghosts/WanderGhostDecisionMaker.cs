@@ -5,17 +5,18 @@ namespace Model.PacMan
     using System.Linq;
     using System.Security.Cryptography;
 
-    public class WanderGhostDecisionMaker : IGhostDecisionMaker
+    public class WanderGhostDecisionMaker : GhostDecisionMaker
     {
-        int close = 10;
-        int far = 30;
+        public override event Action<IDecisionMaker> OnSwitch;
+
+        int farDist = 50;
         private Vertex _position;
         private List<Vertex> path;
 
         private Direction decision;
 
 
-        public List<Vertex> MakeDecision(Graph map, Vertex position, Vertex targetVertex, Random random)
+        public override List<Vertex> MakeDecision(Graph map, Vertex position, Vertex targetVertex, Random random)
         {
             _position = position;
 
@@ -29,9 +30,28 @@ namespace Model.PacMan
             return path;
         }
 
-        public int GetDistanceToPacman(Graph map, Vertex ghost, Vertex pacman)
+        public override void SwitchingDecision(Graph map, Vertex ghost, Vertex pacman)
         {
-            return map.FindPath(ghost, pacman).Result.Item1;
+            var distanceToPacman = map.FindPath(ghost, pacman).Result.Item1;
+            if (distanceToPacman > farDist)
+            {
+                OnSwitch?.Invoke(new ChaseGhostDecisionMaker());
+            }
+
+            if (path == null)
+            {
+                MakeDecision(map, ghost, pacman, new Random());
+            }
+
+            if (path.FirstOrDefault() == null)
+            {
+                throw new Exception("Path is empty");
+            }
+
+            if (path.FirstOrDefault() == ghost)
+            {
+                OnSwitch?.Invoke(new ChaseGhostDecisionMaker());
+            }
         }
 
         private Direction GetDirectionToTheVertex(List<Vertex> targetPath)

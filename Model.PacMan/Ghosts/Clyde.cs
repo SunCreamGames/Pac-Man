@@ -4,11 +4,9 @@ namespace Model.PacMan
 
     public class Clyde : Ghost
     {
-        public Clyde(Graph map, Vertex vert, IGhostDecisionMaker ghostDecisionMaker, Pacman pacman) : base(map, vert,
+        public Clyde(Graph map, Vertex vert, GhostDecisionMaker ghostDecisionMaker, Pacman pacman) : base(map, vert,
             ghostDecisionMaker, pacman)
         {
-            close = 15;
-            far = 30;
             CurrentDirection = Direction.Left;
             rand = new Random(13);
         }
